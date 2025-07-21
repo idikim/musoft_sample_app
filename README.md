@@ -1,4 +1,4 @@
-# musoft_sample_web
+# musoft_sample_app
 
 A new Flutter project.
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musoft_sample_web/view/home_page/meal_tab/widgets/meal_tab_bar.dart';
+import 'package:musoft_sample_app/view/home_page/meal_tab/widgets/meal_tab_bar.dart';
 import 'apply_page/meal_apply_page.dart';
 import 'status_page/meal_status_page.dart';
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:musoft_sample_web/view/counsel_page/counsel_page.dart';
-import 'package:musoft_sample_web/view/learning_page/learning_page.dart';
-import 'package:musoft_sample_web/view/life_page/life_page.dart';
-import 'package:musoft_sample_web/view/my_page/my_page.dart';
-import 'package:musoft_sample_web/view/stack/widgets/bottom_navigation.dart';
-import 'package:musoft_sample_web/view/home_page/home_page.dart';
+import 'package:musoft_sample_app/view/counsel_page/counsel_page.dart';
+import 'package:musoft_sample_app/view/learning_page/learning_page.dart';
+import 'package:musoft_sample_app/view/life_page/life_page.dart';
+import 'package:musoft_sample_app/view/my_page/my_page.dart';
+import 'package:musoft_sample_app/view/stack/widgets/bottom_navigation.dart';
+import 'package:musoft_sample_app/view/home_page/home_page.dart';
 
 class StackPage extends StatefulWidget {
   const StackPage({super.key});

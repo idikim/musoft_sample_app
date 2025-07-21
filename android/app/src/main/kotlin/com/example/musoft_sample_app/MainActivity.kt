@@ -1,4 +1,4 @@
-package com.example.musoft_sample_web
+package com.example.musoft_sample_app
 
 import io.flutter.embedding.android.FlutterActivity
 
