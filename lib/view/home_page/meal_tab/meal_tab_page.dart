@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:musoft_sample_web/view/home_page/meal_tab/widgets/meal_tab_bar.dart';
-import 'meal_apply_page.dart';
-import 'meal_status_page.dart';
+import 'apply_page/meal_apply_page.dart';
+import 'status_page/meal_status_page.dart';
 
 class HomeTabMealPage extends StatelessWidget {
   final int mealTabIndex;

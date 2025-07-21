@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:musoft_sample_web/view/stack/stack_page.dart';
+import 'package:musoft_sample_web/view/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: AppTheme.themeData,
       home: const StackPage(),
       debugShowCheckedModeBanner: false,
     );
