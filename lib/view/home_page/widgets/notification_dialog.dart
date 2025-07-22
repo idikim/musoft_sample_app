@@ -17,6 +17,10 @@ class NotificationDialog extends StatelessWidget {
     final double dialogWidth = MediaQuery.of(context).size.width;
 
     return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(16),
+      ),
+      backgroundColor: Colors.white,
       title: const Text('알림 내역'),
       content: SizedBox(
         width: dialogWidth,

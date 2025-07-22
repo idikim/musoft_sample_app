@@ -27,6 +27,7 @@ class _StackPageState extends State<StackPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigation(
         currentIndex: _currentIndex,
