@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
-
-void showNotificationDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return const NotificationDialog();
-    },
-  );
-}
+import 'package:musoft_sample_app/model/notification.dart';
 
 class NotificationDialog extends StatelessWidget {
   const NotificationDialog({super.key});
@@ -15,6 +7,12 @@ class NotificationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double dialogWidth = MediaQuery.of(context).size.width;
+
+    final List<NotificationItem> notifications = [
+      NotificationItem(title: '신규 공지사항', subtitle: '2024-06-10'),
+      NotificationItem(title: '식사 신청 마감', subtitle: '2024-06-09'),
+      NotificationItem(title: '상점 부여', subtitle: '2024-06-08'),
+    ];
 
     return AlertDialog(
       shape: RoundedRectangleBorder(
@@ -25,24 +23,16 @@ class NotificationDialog extends StatelessWidget {
       content: SizedBox(
         width: dialogWidth,
         height: 200,
-        child: ListView(
-          children: const [
-            ListTile(
-              leading: Icon(Icons.notifications),
-              title: Text('신규 공지사항'),
-              subtitle: Text('2024-06-10'),
-            ),
-            ListTile(
-              leading: Icon(Icons.notifications),
-              title: Text('식사 신청 마감'),
-              subtitle: Text('2024-06-09'),
-            ),
-            ListTile(
-              leading: Icon(Icons.notifications),
-              title: Text('상점 부여'),
-              subtitle: Text('2024-06-08'),
-            ),
-          ],
+        child: ListView.builder(
+          itemCount: notifications.length,
+          itemBuilder: (context, index) {
+            final notification = notifications[index];
+            return ListTile(
+              leading: const Icon(Icons.notifications, color: Colors.blueGrey),
+              title: Text(notification.title),
+              subtitle: Text(notification.subtitle),
+            );
+          },
         ),
       ),
       actions: [
@@ -53,4 +43,13 @@ class NotificationDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+void showNotificationDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return const NotificationDialog();
+    },
+  );
 }
