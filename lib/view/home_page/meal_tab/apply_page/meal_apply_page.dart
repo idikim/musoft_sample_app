@@ -36,7 +36,6 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
     );
     await ref.read(mealOrderAddProvider).addOrder(order);
     setState(() {
-      selectedMealIndex = null;
       isSaving = false;
     });
     _showOrderDialog();
@@ -52,6 +51,9 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  setState(() {
+                    selectedMealIndex = null;
+                  });
                 },
                 child: const Text('확인'),
               ),

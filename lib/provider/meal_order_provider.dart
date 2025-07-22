@@ -18,4 +18,9 @@ class MealOrderAddNotifier {
     await MealOrderRepository.saveOrders(updated);
     ref.invalidate(mealOrderProvider);
   }
+
+  Future<void> deleteOrder(MealOrder order) async {
+    await MealOrderRepository.deleteOrder(order);
+    ref.invalidate(mealOrderProvider);
+  }
 }

@@ -28,4 +28,17 @@ class MealOrderRepository {
     final jsonList = prefs.getStringList(_key) ?? [];
     return jsonList.map((e) => MealOrder.fromJson(jsonDecode(e))).toList();
   }
+
+  static Future<void> deleteOrder(MealOrder order) async {
+    final orders = await loadOrders();
+    orders.removeWhere(
+      (e) =>
+          e.thumbnailUrl == order.thumbnailUrl &&
+          e.menuName == order.menuName &&
+          e.price == order.price &&
+          e.date == order.date &&
+          e.mealType == order.mealType,
+    );
+    await saveOrders(orders);
+  }
 }
