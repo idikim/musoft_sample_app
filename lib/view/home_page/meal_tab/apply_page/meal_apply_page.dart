@@ -197,55 +197,46 @@ class _MealApplyPageState extends State<MealApplyPage> {
                   ),
                   width: double.infinity,
                   height: 80,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      shape: WidgetStatePropertyAll(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(12),
-                        ),
-                      ),
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>((
-                        states,
-                      ) {
-                        if (states.contains(WidgetState.disabled)) {
-                          return Colors.black26;
-                        }
-                        return Colors.blueAccent;
-                      }),
-                      foregroundColor: WidgetStatePropertyAll(Colors.white),
-                      elevation: WidgetStateProperty.resolveWith<double?>((
-                        states,
-                      ) {
-                        if (states.contains(WidgetState.disabled)) {
-                          return 0;
-                        }
-                        return 8;
-                      }),
-                      shadowColor: WidgetStateProperty.resolveWith<Color?>((
-                        states,
-                      ) {
-                        if (states.contains(WidgetState.disabled)) {
-                          return Colors.transparent;
-                        }
-                        return Colors.black.withOpacity(0.3);
-                      }),
-                    ),
-                    onPressed:
-                        selectedMealIndex != null ? _showOrderDialog : null,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.shopping_cart_outlined, size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          '도시락 주문하기',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                  child: _AnimatedTapScale(
+                    onTap: selectedMealIndex != null ? _showOrderDialog : null,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        shape: WidgetStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.circular(12),
                           ),
                         ),
-                      ],
+                        backgroundColor: WidgetStatePropertyAll(
+                          selectedMealIndex != null
+                              ? Colors.blueAccent
+                              : Colors.black26,
+                        ),
+                        foregroundColor: WidgetStatePropertyAll(Colors.white),
+                        elevation: WidgetStatePropertyAll(
+                          selectedMealIndex != null ? 8 : 0,
+                        ),
+                        shadowColor: WidgetStatePropertyAll(
+                          selectedMealIndex != null
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.transparent,
+                        ),
+                      ),
+                      onPressed: null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.shopping_cart_outlined, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            '도시락 주문하기',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -304,6 +295,63 @@ class _SelectButton extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _AnimatedTapScale extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  const _AnimatedTapScale({required this.child, this.onTap});
+
+  @override
+  State<_AnimatedTapScale> createState() => _AnimatedTapScaleState();
+}
+
+class _AnimatedTapScaleState extends State<_AnimatedTapScale>
+    with SingleTickerProviderStateMixin {
+  double _scale = 1.0;
+  bool get _isEnabled => widget.onTap != null;
+
+  void _onTapDown(TapDownDetails details) {
+    if (_isEnabled) {
+      setState(() {
+        _scale = 0.95;
+      });
+    }
+  }
+
+  void _onTapUp(TapUpDetails details) async {
+    if (_isEnabled) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      setState(() {
+        _scale = 1.0;
+      });
+      await Future.delayed(const Duration(milliseconds: 100));
+      widget.onTap?.call();
+    }
+  }
+
+  void _onTapCancel() {
+    if (_isEnabled) {
+      setState(() {
+        _scale = 1.0;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _isEnabled ? _onTapDown : null,
+      onTapUp: _isEnabled ? _onTapUp : null,
+      onTapCancel: _isEnabled ? _onTapCancel : null,
+      child: AnimatedScale(
+        scale: _isEnabled ? _scale : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        child: widget.child,
       ),
     );
   }

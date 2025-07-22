@@ -6,7 +6,7 @@ class ItemMealCard extends StatelessWidget {
   final String description;
   final String price;
   final bool selected;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const ItemMealCard({
     super.key,

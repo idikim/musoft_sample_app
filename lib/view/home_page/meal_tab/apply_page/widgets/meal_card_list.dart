@@ -40,19 +40,71 @@ class _MealCardListState extends State<MealCardList> {
                 final meal = widget.meals[index];
                 return SizedBox(
                   width: itemWidth,
-                  child: ItemMealCard(
-                    imageUrl: meal.imageUrl,
-                    menu: meal.menu,
-                    description: meal.description,
-                    price: meal.price,
-                    selected: widget.selectedIndex == index,
+                  child: _AnimatedTapScale(
                     onTap: () => widget.onMealSelected(index),
+                    child: ItemMealCard(
+                      imageUrl: meal.imageUrl,
+                      menu: meal.menu,
+                      description: meal.description,
+                      price: meal.price,
+                      selected: widget.selectedIndex == index,
+                      onTap: null,
+                    ),
                   ),
                 );
               }),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _AnimatedTapScale extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  const _AnimatedTapScale({required this.child, this.onTap});
+
+  @override
+  State<_AnimatedTapScale> createState() => _AnimatedTapScaleState();
+}
+
+class _AnimatedTapScaleState extends State<_AnimatedTapScale>
+    with SingleTickerProviderStateMixin {
+  double _scale = 1.0;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _scale = 1.05;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    setState(() {
+      _scale = 1.0;
+    });
+    widget.onTap?.call();
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _scale = 1.0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        child: widget.child,
       ),
     );
   }
