@@ -8,9 +8,15 @@ class MyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: FloatingActionButton(
-        child: Center(child: Icon(Icons.notifications_outlined)),
+        elevation: 4,
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.notifications_outlined),
         onPressed: () async {
-          await NotificationHelper.show('title', 'content');
+          await NotificationHelper.show(
+            'URL 연결테스트',
+            url: 'https://frolicking-lebkuchen-4d0db6.netlify.app/fawefawe',
+          );
         },
       ),
     );

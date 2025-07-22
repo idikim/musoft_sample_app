@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 @pragma('vm:entry-point')
@@ -11,6 +11,12 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 class NotificationHelper {
   static final flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  static void Function(String url)? onNotificationTap;
+
+  static void setOnNotificationTap(void Function(String url) callback) {
+    onNotificationTap = callback;
+  }
 
   static Future<void> requestPermission() async {
     if (Platform.isAndroid) {
@@ -46,6 +52,11 @@ class NotificationHelper {
       onDidReceiveNotificationResponse: (noti) {
         // 포그라운드에서 알림 터치했을 때
         print(noti.payload);
+        if (noti.payload != null &&
+            noti.payload!.isNotEmpty &&
+            onNotificationTap != null) {
+          onNotificationTap!(noti.payload!);
+        }
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
@@ -62,10 +73,13 @@ class NotificationHelper {
     return await androidNotificationPlugin?.requestNotificationsPermission();
   }
 
-  static Future<void> show(String title, String content) async {
+  static Future<void> show(String content, {String? url}) async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    final appName = packageInfo.appName;
+
     return flutterLocalNotificationsPlugin.show(
       0, // 알림 ID
-      title, // 알림 제목
+      appName,
       content, // 알림 내용
       const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -80,7 +94,7 @@ class NotificationHelper {
           presentBadge: true, // 배지 표시 여부
         ),
       ),
-      payload: 'Open from Local Notification',
+      payload: url ?? '',
     );
   }
 }
