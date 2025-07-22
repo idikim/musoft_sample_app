@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:musoft_sample_app/helper/notification_helper.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('마이페이지 화면', style: TextStyle(fontSize: 24)));
+    return Center(
+      child: FloatingActionButton(
+        child: Center(child: Icon(Icons.notifications_outlined)),
+        onPressed: () async {
+          await NotificationHelper.show('title', 'content');
+        },
+      ),
+    );
   }
 }
