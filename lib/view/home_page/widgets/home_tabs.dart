@@ -22,8 +22,11 @@ class HomeTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 48,
+        Container(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.black12)),
+          ),
+          height: 56,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -41,7 +44,7 @@ class HomeTabs extends StatelessWidget {
                               ? const Border(
                                 bottom: BorderSide(
                                   width: 2,
-                                  color: Colors.blue,
+                                  color: Colors.blueAccent,
                                 ),
                               )
                               : null,
@@ -49,7 +52,8 @@ class HomeTabs extends StatelessWidget {
                     child: Text(
                       topTabs[i],
                       style: TextStyle(
-                        color: topTabIndex == i ? Colors.blue : Colors.black,
+                        color:
+                            topTabIndex == i ? Colors.blueAccent : Colors.black,
                         fontWeight:
                             topTabIndex == i
                                 ? FontWeight.bold
@@ -67,7 +71,10 @@ class HomeTabs extends StatelessWidget {
                     horizontal: 8,
                     vertical: 8,
                   ),
-                  child: const Icon(Icons.notifications, color: Colors.black),
+                  child: const Icon(
+                    Icons.notifications_none_outlined,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
             ],

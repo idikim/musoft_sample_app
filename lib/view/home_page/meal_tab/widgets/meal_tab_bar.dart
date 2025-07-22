@@ -15,8 +15,11 @@ class HomeTabMealTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.black12)),
+      ),
+      height: 60,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(MealTabStrings.mealTabs.length, (i) {
@@ -24,18 +27,19 @@ class HomeTabMealTabBar extends StatelessWidget {
             onTap: () => onMealTabChanged(i),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color:
-                    mealTabIndex == i ? Colors.blue[100] : Colors.transparent,
-                borderRadius: BorderRadius.circular(16),
+                    mealTabIndex == i ? Colors.blueAccent : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 MealTabStrings.mealTabs[i],
                 style: TextStyle(
-                  color: mealTabIndex == i ? Colors.blue : Colors.black,
+                  color: mealTabIndex == i ? Colors.white : Colors.black,
                   fontWeight:
                       mealTabIndex == i ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 16,
                 ),
               ),
             ),

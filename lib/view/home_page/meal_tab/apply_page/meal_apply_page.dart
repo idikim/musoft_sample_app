@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:musoft_sample_app/model/meal.dart';
 import 'widgets/date_picker_bar.dart';
 import 'widgets/meal_card_list.dart';
 
@@ -21,78 +22,78 @@ class _MealApplyPageState extends State<MealApplyPage> {
       return [
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}lunch1/200',
-          vendor: '업체A',
           menu: '불고기덮밥',
-          price: '7,000원',
+          description: '고소한 불고기와 밥이 어우러진 한 그릇 요리',
+          price: '7,000',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}lunch2/200',
-          vendor: '업체B',
           menu: '치킨마요',
-          price: '6,500원',
+          description: '닭고기와 마요네즈의 조화, 인기 메뉴',
+          price: '6,500',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}lunch3/200',
-          vendor: '업체C',
           menu: '제육볶음',
-          price: '7,500원',
+          description: '매콤한 돼지고기 볶음과 밥',
+          price: '7,500',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}lunch4/200',
-          vendor: '업체D',
           menu: '돈까스',
-          price: '8,000원',
+          description: '바삭한 돈까스와 특제 소스',
+          price: '8,000',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}lunch5/200',
-          vendor: '업체E',
           menu: '비빔밥',
-          price: '7,200원',
+          description: '다양한 나물과 고추장이 어우러진 비빔밥',
+          price: '7,200',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}lunch6/200',
-          vendor: '업체F',
           menu: '카레라이스',
-          price: '6,800원',
+          description: '진한 카레와 밥의 만남',
+          price: '6,800',
         ),
       ];
     } else {
       return [
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}dinner1/200',
-          vendor: '업체G',
           menu: '오므라이스',
-          price: '7,300원',
+          description: '계란으로 감싼 볶음밥',
+          price: '7,300',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}dinner2/200',
-          vendor: '업체H',
           menu: '김치볶음밥',
-          price: '6,900원',
+          description: '매콤한 김치와 밥의 조화',
+          price: '6,900',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}dinner3/200',
-          vendor: '업체I',
           menu: '닭갈비덮밥',
-          price: '7,800원',
+          description: '매콤한 닭갈비와 밥',
+          price: '7,800',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}dinner4/200',
-          vendor: '업체J',
           menu: '함박스테이크',
-          price: '8,200원',
+          description: '두툼한 함박스테이크와 소스',
+          price: '8,200',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}dinner5/200',
-          vendor: '업체K',
           menu: '새우볶음밥',
-          price: '7,400원',
+          description: '탱글한 새우와 볶음밥',
+          price: '7,400',
         ),
         Meal(
           imageUrl: 'https://picsum.photos/seed/${dateKey}dinner6/200',
-          vendor: '업체L',
           menu: '참치마요',
-          price: '6,700원',
+          description: '참치와 마요네즈의 고소함',
+          price: '6,700',
         ),
       ];
     }
@@ -103,10 +104,15 @@ class _MealApplyPageState extends State<MealApplyPage> {
       context: context,
       builder:
           (context) => CupertinoAlertDialog(
-            title: const Text('주문예약이 완료되었습니다.'),
+            title: const Text('주문이 완료되었습니다!'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    selectedMealIndex = null;
+                  });
+                },
                 child: const Text('확인'),
               ),
             ],
@@ -128,8 +134,8 @@ class _MealApplyPageState extends State<MealApplyPage> {
             });
           },
         ),
-        const SizedBox(height: 16),
         Container(
+          margin: EdgeInsets.symmetric(vertical: 8),
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: Colors.black12,
@@ -162,51 +168,88 @@ class _MealApplyPageState extends State<MealApplyPage> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        MealCardList(
-          selectedIndex: selectedMealIndex,
-          onMealSelected: (index) {
-            setState(() {
-              selectedMealIndex = index;
-            });
-          },
-          meals: meals,
+        Container(
+          width: double.infinity,
+          height: 1,
+          decoration: BoxDecoration(color: Colors.black12),
         ),
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith<Color?>((
-                  states,
-                ) {
-                  if (states.contains(WidgetState.disabled)) {
-                    return Colors.grey.shade300;
-                  }
-                  return Colors.blue;
-                }),
-                foregroundColor: WidgetStateProperty.resolveWith<Color?>((
-                  states,
-                ) {
-                  if (states.contains(WidgetState.disabled)) {
-                    return Colors.black38;
-                  }
-                  return Colors.white;
-                }),
-              ),
-              onPressed: selectedMealIndex != null ? _showOrderDialog : null,
-              child: Text(
-                '도시락 주문하기',
-                style: TextStyle(
-                  fontWeight:
-                      selectedMealIndex != null
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+        Expanded(
+          child: Container(
+            color: Colors.grey.shade100,
+            child: Column(
+              children: [
+                Expanded(
+                  child: MealCardList(
+                    selectedIndex: selectedMealIndex,
+                    onMealSelected: (index) {
+                      setState(() {
+                        selectedMealIndex = index;
+                      });
+                    },
+                    meals: meals,
+                  ),
                 ),
-              ),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(top: BorderSide(color: Colors.black12)),
+                  ),
+                  width: double.infinity,
+                  height: 80,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadiusGeometry.circular(12),
+                        ),
+                      ),
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>((
+                        states,
+                      ) {
+                        if (states.contains(WidgetState.disabled)) {
+                          return Colors.black26;
+                        }
+                        return Colors.blueAccent;
+                      }),
+                      foregroundColor: WidgetStatePropertyAll(Colors.white),
+                      elevation: WidgetStateProperty.resolveWith<double?>((
+                        states,
+                      ) {
+                        if (states.contains(WidgetState.disabled)) {
+                          return 0;
+                        }
+                        return 8;
+                      }),
+                      shadowColor: WidgetStateProperty.resolveWith<Color?>((
+                        states,
+                      ) {
+                        if (states.contains(WidgetState.disabled)) {
+                          return Colors.transparent;
+                        }
+                        return Colors.black.withOpacity(0.3);
+                      }),
+                    ),
+                    onPressed:
+                        selectedMealIndex != null ? _showOrderDialog : null,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.shopping_cart_outlined, size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          '도시락 주문하기',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -250,7 +293,7 @@ class _SelectButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(999),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
             child: Text(
               text,
               style: TextStyle(

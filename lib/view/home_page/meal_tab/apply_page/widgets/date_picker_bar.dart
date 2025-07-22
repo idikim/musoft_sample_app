@@ -51,64 +51,85 @@ class _DatePickerBarState extends State<DatePickerBar> {
         child: Center(child: CircularProgressIndicator()),
       );
     }
-    return SizedBox(
-      height: 80,
-      child: ListView.builder(
-        controller: _scrollController,
-        scrollDirection: Axis.horizontal,
-        itemCount: dateList.length,
-        itemBuilder: (context, index) {
-          final date = dateList[index];
-          final isToday = _isSameDay(date, DateTime.now());
-          final isSelected = _isSameDay(date, selectedDate);
-          final weekday = date.weekday;
-          final isWeekend =
-              weekday == DateTime.saturday || weekday == DateTime.sunday;
-          final textColor = isWeekend ? Colors.red : Colors.black;
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.black12)),
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        height: 80,
+        child: ListView.builder(
+          controller: _scrollController,
+          scrollDirection: Axis.horizontal,
+          itemCount: dateList.length,
+          itemBuilder: (context, index) {
+            final date = dateList[index];
+            final isSelected = _isSameDay(date, selectedDate);
+            final weekday = date.weekday;
+            final isWeekend =
+                weekday == DateTime.saturday || weekday == DateTime.sunday;
+            final textColor = isWeekend ? Colors.red : Colors.black;
 
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedDate = date;
-              });
-              widget.onDateSelected(date);
-            },
-            child: Container(
-              width: 48,
-              margin: EdgeInsets.only(
-                left: index == 0 ? 12 : 4,
-                right: index == 29 ? 12 : 4,
-                top: 8,
-                bottom: 8,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.blueGrey : Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${date.day}',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : textColor,
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedDate = date;
+                });
+                widget.onDateSelected(date);
+              },
+              child: Container(
+                width: 56,
+                margin: EdgeInsets.only(
+                  left: index == 0 ? 12 : 4,
+                  right: index == 29 ? 12 : 4,
+                ),
+                decoration: BoxDecoration(
+                  color:
+                      isSelected
+                          ? Colors.black
+                          : Colors.black.withOpacity(0.025),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      DateFormat.E('ko_KR').format(date),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected ? Colors.white : textColor,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isToday ? '오늘' : DateFormat.E('ko_KR').format(date),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: isSelected ? Colors.white : textColor,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${date.month}/',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? Colors.white : textColor,
+                          ),
+                        ),
+                        Text(
+                          '${date.day}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? Colors.white : textColor,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
