@@ -21,12 +21,10 @@ class HomeTabMealPage extends StatelessWidget {
           onMealTabChanged: onMealTabChanged,
         ),
         Expanded(
-          child: Center(
-            child:
-                mealTabIndex == 0
-                    ? const MealApplyPage()
-                    : const MealStatusPage(),
-          ),
+          child:
+              mealTabIndex == 0
+                  ? const MealApplyPage()
+                  : const MealStatusPage(),
         ),
       ],
     );

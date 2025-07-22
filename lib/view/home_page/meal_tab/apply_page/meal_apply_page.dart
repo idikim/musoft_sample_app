@@ -1,20 +1,46 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:musoft_sample_app/model/meal_order.dart';
+import 'package:musoft_sample_app/provider/meal_order_provider.dart';
 import 'widgets/date_picker_bar.dart';
 import 'widgets/meal_card_list.dart';
 import 'meal_sample_data.dart';
 
-class MealApplyPage extends StatefulWidget {
+class MealApplyPage extends ConsumerStatefulWidget {
   const MealApplyPage({super.key});
 
   @override
-  State<MealApplyPage> createState() => _MealApplyPageState();
+  ConsumerState<MealApplyPage> createState() => _MealApplyPageState();
 }
 
-class _MealApplyPageState extends State<MealApplyPage> {
+class _MealApplyPageState extends ConsumerState<MealApplyPage> {
   DateTime selectedDate = DateTime.now();
   String selectedMeal = '점심';
   int? selectedMealIndex;
+  bool isSaving = false;
+
+  Future<void> _orderMeal() async {
+    if (selectedMealIndex == null) return;
+    setState(() {
+      isSaving = true;
+    });
+    final meals = getMealsFor(selectedDate, selectedMeal);
+    final meal = meals[selectedMealIndex!];
+    final order = MealOrder(
+      thumbnailUrl: meal.imageUrl,
+      menuName: meal.menu,
+      price: int.tryParse(meal.price.replaceAll(',', '')) ?? 0,
+      date: selectedDate,
+      mealType: selectedMeal,
+    );
+    await ref.read(mealOrderAddProvider).addOrder(order);
+    setState(() {
+      selectedMealIndex = null;
+      isSaving = false;
+    });
+    _showOrderDialog();
+  }
 
   void _showOrderDialog() {
     showDialog(
@@ -26,9 +52,6 @@ class _MealApplyPageState extends State<MealApplyPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  setState(() {
-                    selectedMealIndex = null;
-                  });
                 },
                 child: const Text('확인'),
               ),
@@ -92,7 +115,7 @@ class _MealApplyPageState extends State<MealApplyPage> {
         ),
         Expanded(
           child: Container(
-            color: Colors.grey.shade100,
+            color: Colors.grey[100],
             child: Column(
               children: [
                 Expanded(
@@ -115,7 +138,10 @@ class _MealApplyPageState extends State<MealApplyPage> {
                   width: double.infinity,
                   height: 80,
                   child: _AnimatedTapScale(
-                    onTap: selectedMealIndex != null ? _showOrderDialog : null,
+                    onTap:
+                        (selectedMealIndex != null && !isSaving)
+                            ? _orderMeal
+                            : null,
                     child: ElevatedButton(
                       style: ButtonStyle(
                         shape: WidgetStatePropertyAll(
@@ -124,16 +150,16 @@ class _MealApplyPageState extends State<MealApplyPage> {
                           ),
                         ),
                         backgroundColor: WidgetStatePropertyAll(
-                          selectedMealIndex != null
+                          selectedMealIndex != null && !isSaving
                               ? Colors.blueAccent
                               : Colors.black26,
                         ),
                         foregroundColor: WidgetStatePropertyAll(Colors.white),
                         elevation: WidgetStatePropertyAll(
-                          selectedMealIndex != null ? 8 : 0,
+                          selectedMealIndex != null && !isSaving ? 8 : 0,
                         ),
                         shadowColor: WidgetStatePropertyAll(
-                          selectedMealIndex != null
+                          selectedMealIndex != null && !isSaving
                               ? Colors.black.withOpacity(0.3)
                               : Colors.transparent,
                         ),
@@ -143,6 +169,17 @@ class _MealApplyPageState extends State<MealApplyPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (isSaving) ...[
+                            SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                          ],
                           Icon(Icons.shopping_cart_outlined, size: 20),
                           SizedBox(width: 8),
                           Text(
