@@ -11,18 +11,25 @@ import 'package:musoft_sample_app/view/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await NotificationHelper.initialize();
-  await NotificationHelper.requestPermission();
-  await FcmHelper.initialize();
 
-  final details =
-      await NotificationHelper.flutterLocalNotificationsPlugin
-          .getNotificationAppLaunchDetails();
-  String? initialUrl = details?.notificationResponse?.payload;
+  await NotificationHelper.initAll(
+    onNotificationTapCallback: (url) {
+      Get.to(() => WebViewPage(url: url));
+    },
+  );
+  await FcmHelper.initAll(
+    onFcmTapCallback: (url) {
+      Get.to(() => WebViewPage(url: url));
+    },
+  );
 
-  NotificationHelper.setOnNotificationTap((url) {
-    Get.to(() => WebViewPage(url: url));
-  });
+  String? initialUrl =
+      await NotificationHelper.getInitialLocalNotificationUrl();
+  final fcmUrl = await FcmHelper.getInitialFcmUrl();
+  if (fcmUrl != null && fcmUrl.isNotEmpty) {
+    initialUrl = fcmUrl;
+  }
+
   runApp(ProviderScope(child: MyApp(initialUrl: initialUrl)));
 }
 

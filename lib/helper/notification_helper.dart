@@ -3,18 +3,21 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-@pragma('vm:entry-point')
-// void notificationTapBackground(NotificationResponse notificationResponse) {
-//   // 백그라운드에서 푸시알림 클릭시 실행할 로직
-// }
 class NotificationHelper {
   static final flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  static void Function(String url)? _onNotificationTap;
 
-  static void Function(String url)? onNotificationTap;
-
+  /// 로컬 알림 클릭 콜백 등록
   static void setOnNotificationTap(void Function(String url) callback) {
-    onNotificationTap = callback;
+    _onNotificationTap = callback;
+  }
+
+  /// 앱이 로컬 알림 클릭으로 시작된 경우 url 반환
+  static Future<String?> getInitialLocalNotificationUrl() async {
+    final details =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    return details?.notificationResponse?.payload;
   }
 
   /// 알림 권한 요청
@@ -32,47 +35,54 @@ class NotificationHelper {
 
   /// 알림 초기화
   static Future<void> initialize() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    final DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings(
-          requestAlertPermission: true,
-          requestBadgePermission: true,
-          requestSoundPermission: true,
-        );
-
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-          android: initializationSettingsAndroid,
-          iOS: initializationSettingsDarwin,
-        );
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    final iOSInit = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+    final initSettings = InitializationSettings(
+      android: androidInit,
+      iOS: iOSInit,
+    );
 
     await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      initSettings,
       onDidReceiveNotificationResponse: (noti) {
-        // 포그라운드에서 알림 터치했을 때
-        print(noti.payload);
         if (noti.payload != null &&
             noti.payload!.isNotEmpty &&
-            onNotificationTap != null) {
-          onNotificationTap!(noti.payload!);
+            _onNotificationTap != null) {
+          _onNotificationTap!(noti.payload!);
         }
       },
-      // onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
     await _requestAndroidPermissionForOver33();
+
+    // Android 알림 채널 생성
+    if (Platform.isAndroid) {
+      const channel = AndroidNotificationChannel(
+        'default_channel',
+        '기본 알림',
+        description: '기본 푸시 알림 채널',
+        importance: Importance.high,
+      );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.createNotificationChannel(channel);
+    }
   }
 
   /// 안드로이드 13 이상 권한 요청
   static Future<bool?> _requestAndroidPermissionForOver33() async {
-    final androidNotificationPlugin =
+    final androidPlugin =
         flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin
             >();
-    return await androidNotificationPlugin?.requestNotificationsPermission();
+    return await androidPlugin?.requestNotificationsPermission();
   }
 
   /// 알림 표시
@@ -81,23 +91,33 @@ class NotificationHelper {
     final appName = packageInfo.appName;
 
     return flutterLocalNotificationsPlugin.show(
-      0, // 알림 ID
+      0,
       appName,
-      content, // 알림 내용
+      content,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'test channel id', // 알림 분류값
-          'General Notifications', // 알림 채널명
-          importance: Importance.high, // 알림의 우선순위
-          playSound: true, // 알림 소리 재생 여부
+          'default_channel',
+          'General Notifications',
+          importance: Importance.high,
+          playSound: true,
         ),
         iOS: DarwinNotificationDetails(
-          presentSound: true, // 알림 소리 재생 여부
-          presentAlert: true, // 알림 표시 여부
-          presentBadge: true, // 배지 표시 여부
+          presentSound: true,
+          presentAlert: true,
+          presentBadge: true,
         ),
       ),
       payload: url ?? '',
     );
+  }
+
+  /// 로컬 알림 전체 초기화 및 핸들러 등록
+  static Future<void> initAll({
+    void Function(String url)? onNotificationTapCallback,
+  }) async {
+    await initialize();
+    await requestPermission();
+    if (onNotificationTapCallback != null)
+      setOnNotificationTap(onNotificationTapCallback);
   }
 }

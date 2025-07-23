@@ -1,25 +1,43 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:get/get.dart';
 import 'package:musoft_sample_app/api/user_api.dart';
 import 'package:musoft_sample_app/helper/notification_helper.dart';
-import 'package:musoft_sample_app/view/my_page/web_view_page.dart';
 
 class FcmHelper {
+  static void Function(String url)? _onFcmTap;
+
+  /// FCM 알림 클릭 콜백 등록
+  static void setOnFcmTap(void Function(String url) callback) {
+    _onFcmTap = callback;
+  }
+
+  /// 앱이 FCM 알림 클릭으로 시작된 경우 url 반환
+  static Future<String?> getInitialFcmUrl() async {
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    final url = initialMessage?.data['url'];
+    return (url != null && url.isNotEmpty) ? url : null;
+  }
+
+  /// FCM 백그라운드 메시지 핸들러
+  @pragma('vm:entry-point')
+  static Future<void> firebaseMessagingBackgroundHandler(
+    RemoteMessage message,
+  ) async {
+    log('Handling a background message: ${message.messageId}');
+  }
+
+  /// FCM 초기화 및 핸들러 등록
   static Future<void> initialize() async {
-    // iOS에서의 별도 토큰 처리
+    // 권한 및 토큰 처리
     if (Platform.isIOS) {
       await FirebaseMessaging.instance.requestPermission();
-
-      NotificationSettings settings =
+      final settings =
           await FirebaseMessaging.instance.getNotificationSettings();
-
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-
+        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
         if (apnsToken != null) {
-          String? token = await FirebaseMessaging.instance.getToken();
+          final token = await FirebaseMessaging.instance.getToken();
           log('FCM Device Token: $token');
           if (token != null) {
             await UserApi.sendFcmToken(token, apnsToken: apnsToken);
@@ -29,14 +47,14 @@ class FcmHelper {
         }
       }
     } else {
-      String? token = await FirebaseMessaging.instance.getToken();
+      final token = await FirebaseMessaging.instance.getToken();
       log('FCM Device Token: $token');
       if (token != null) {
         await UserApi.sendFcmToken(token, apnsToken: null);
       }
     }
 
-    // 토큰 갱신 리스너 등록
+    // 토큰 갱신 리스너
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       log('FCM Token refreshed: $newToken');
       UserApi.sendFcmToken(newToken, apnsToken: null);
@@ -49,19 +67,21 @@ class FcmHelper {
       NotificationHelper.show(body, url: url);
     });
 
-    // 알림 클릭(앱이 백그라운드/종료 상태) 시 url 이동
+    // 알림 클릭 시 콜백 호출
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       final url = message.data['url'];
-      if (url != null && url.isNotEmpty) {
-        Get.to(() => WebViewPage(url: url));
+      if (url != null && url.isNotEmpty && _onFcmTap != null) {
+        _onFcmTap!(url);
       }
     });
+  }
 
-    // 앱이 완전히 종료된 상태에서 알림 클릭으로 시작된 경우
-    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage?.data['url'] != null &&
-        initialMessage!.data['url'].isNotEmpty) {
-      Get.to(() => WebViewPage(url: initialMessage.data['url']));
-    }
+  /// FCM 전체 초기화 및 핸들러 등록
+  static Future<void> initAll({
+    void Function(String url)? onFcmTapCallback,
+  }) async {
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    if (onFcmTapCallback != null) setOnFcmTap(onFcmTapCallback);
+    await initialize();
   }
 }

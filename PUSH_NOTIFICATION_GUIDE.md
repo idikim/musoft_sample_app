@@ -1,6 +1,6 @@
 # FCM 기반 푸시알림 URL 연동 상세 가이드
 
-이 문서는 Firebase Cloud Messaging(FCM)을 활용하여 서버에서 모바일 앱으로 푸시알림을 전송하고, 알림 클릭 시 앱 내 웹뷰(WebViewPage)로 특정 URL을 이동시키는 전체 연동 구조와 구현 방법을 상세히 설명합니다.
+이 문서는 Firebase Cloud Messaging(FCM)을 활용하여 서버에서 모바일 앱으로 푸시알림을 전송하고, 알림 클릭 시 앱 내 웹뷰(WebViewPage)로 특정 URL을 이동시키는 전체 연동 구조와 구현 방법을 실제 코드 구조에 맞게 설명합니다.
 
 ---
 
@@ -43,41 +43,83 @@ dependencies:
 #### 1) 토큰 발급 및 서버 전송
 - 앱 실행 시 FCM 토큰을 발급받아 서버로 전송합니다.
 - 토큰이 갱신될 때마다 서버로 갱신된 토큰을 전송합니다.
+- iOS의 경우 apnsToken도 함께 전송합니다.
 
 ```dart
 // lib/api/user_api.dart
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 class UserApi {
-  static Future<void> sendFcmToken(String token) async {
-    await http.post(
-      Uri.parse('https://실제-서버-주소/api/user/fcm-token'),
-      headers: {'Content-Type': 'application/json'},
-      body: '{"token": "$token"}',
-    );
+  static Future<void> sendFcmToken(String token, {String? apnsToken}) async {
+    try {
+      await http.post(
+        Uri.parse('http://10.0.2.2:8080/api/user/fcm-token'),
+        headers: {'Content-Type': 'application/json'},
+        body: '{"token": "$token"}',
+      );
+    } catch (e) {
+      log('sendFcmToken error: $e');
+    }
   }
 }
 ```
 
+#### 2) FCM 초기화 및 핸들러 등록
+- FCM 토큰 발급, 갱신, 알림 수신 및 클릭 이벤트를 처리합니다.
+- 콜백 등록 및 초기화는 `FcmHelper.initAll`을 사용합니다.
+
 ```dart
 // lib/helper/fcm_helper.dart
+import 'dart:developer';
+import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:get/get.dart';
 import 'package:musoft_sample_app/api/user_api.dart';
 import 'package:musoft_sample_app/helper/notification_helper.dart';
-import 'package:musoft_sample_app/view/my_page/web_view_page.dart';
 
 class FcmHelper {
+  static void Function(String url)? _onFcmTap;
+
+  static void setOnFcmTap(void Function(String url) callback) {
+    _onFcmTap = callback;
+  }
+
+  static Future<String?> getInitialFcmUrl() async {
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    final url = initialMessage?.data['url'];
+    return (url != null && url.isNotEmpty) ? url : null;
+  }
+
   static Future<void> initialize() async {
-    // 토큰 발급 및 서버 전송
-    String? token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      UserApi.sendFcmToken(token);
+    // 권한 및 토큰 처리
+    if (Platform.isIOS) {
+      await FirebaseMessaging.instance.requestPermission();
+      final settings =
+          await FirebaseMessaging.instance.getNotificationSettings();
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        if (apnsToken != null) {
+          final token = await FirebaseMessaging.instance.getToken();
+          log('FCM Device Token: $token');
+          if (token != null) {
+            await UserApi.sendFcmToken(token, apnsToken: apnsToken);
+          }
+        } else {
+          log('APNS 토큰을 받아오지 못했습니다.');
+        }
+      }
+    } else {
+      final token = await FirebaseMessaging.instance.getToken();
+      log('FCM Device Token: $token');
+      if (token != null) {
+        await UserApi.sendFcmToken(token, apnsToken: null);
+      }
     }
 
-    // 토큰 갱신 리스너 등록
+    // 토큰 갱신 리스너
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-      UserApi.sendFcmToken(newToken);
+      log('FCM Token refreshed: $newToken');
+      UserApi.sendFcmToken(newToken, apnsToken: null);
     });
 
     // 포그라운드 메시지 수신 시 로컬 알림 표시
@@ -87,38 +129,112 @@ class FcmHelper {
       NotificationHelper.show(body, url: url);
     });
 
-    // 알림 클릭(앱이 백그라운드/종료 상태) 시 url 이동
+    // 알림 클릭 시 콜백 호출
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       final url = message.data['url'];
-      if (url != null && url.isNotEmpty) {
-        Get.to(() => WebViewPage(url: url));
+      if (url != null && url.isNotEmpty && _onFcmTap != null) {
+        _onFcmTap!(url);
       }
     });
+  }
 
-    // 앱이 완전히 종료된 상태에서 알림 클릭으로 시작된 경우
-    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage?.data['url'] != null &&
-        initialMessage!.data['url'].isNotEmpty) {
-      Get.to(() => WebViewPage(url: initialMessage.data['url']));
-    }
+  static Future<void> initAll({
+    void Function(String url)? onFcmTapCallback,
+  }) async {
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    if (onFcmTapCallback != null) setOnFcmTap(onFcmTapCallback);
+    await initialize();
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> firebaseMessagingBackgroundHandler(
+    RemoteMessage message,
+  ) async {
+    log('Handling a background message: \\${message.messageId}');
   }
 }
 ```
 
-#### 2) main.dart에서 초기화
+#### 3) NotificationHelper 초기화 및 콜백 등록
+- 포그라운드 알림 표시, 권한 요청, 클릭 콜백 등록 등 담당
+
 ```dart
+// lib/helper/notification_helper.dart
+import 'dart:io';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class NotificationHelper {
+  static final flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  static void Function(String url)? _onNotificationTap;
+
+  static void setOnNotificationTap(void Function(String url) callback) {
+    _onNotificationTap = callback;
+  }
+
+  static Future<String?> getInitialLocalNotificationUrl() async {
+    final details =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    return details?.notificationResponse?.payload;
+  }
+
+  static Future<void> requestPermission() async {
+    if (Platform.isAndroid) {
+      await Permission.notification.request();
+    } else if (Platform.isIOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+    }
+  }
+
+  static Future<void> initialize() async {
+    // ... (생략: 실제 코드 참고)
+  }
+
+  static Future<void> initAll({
+    void Function(String url)? onNotificationTapCallback,
+  }) async {
+    await initialize();
+    await requestPermission();
+    if (onNotificationTapCallback != null)
+      setOnNotificationTap(onNotificationTapCallback);
+  }
+}
+```
+
+#### 4) main.dart에서 전체 초기화 및 URL 처리
+- 앱 시작 시 알림 클릭/FCM 클릭으로 전달된 URL을 받아 웹뷰로 이동
+
+```dart
+// lib/main.dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationHelper.initialize();
-  await NotificationHelper.requestPermission();
-  await FcmHelper.initialize();
+  await Firebase.initializeApp();
 
-  // 포그라운드 알림 탭 시 동작
-  NotificationHelper.setOnNotificationTap((url) {
-    Get.to(() => WebViewPage(url: url));
-  });
+  await NotificationHelper.initAll(
+    onNotificationTapCallback: (url) {
+      Get.to(() => WebViewPage(url: url));
+    },
+  );
+  await FcmHelper.initAll(
+    onFcmTapCallback: (url) {
+      Get.to(() => WebViewPage(url: url));
+    },
+  );
 
-  runApp(ProviderScope(child: MyApp()));
+  String? initialUrl =
+      await NotificationHelper.getInitialLocalNotificationUrl();
+  final fcmUrl = await FcmHelper.getInitialFcmUrl();
+  if (fcmUrl != null && fcmUrl.isNotEmpty) {
+    initialUrl = fcmUrl;
+  }
+
+  runApp(ProviderScope(child: MyApp(initialUrl: initialUrl)));
 }
 ```
 

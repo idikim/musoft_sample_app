@@ -12,6 +12,7 @@ class MyPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FloatingActionButton(
+            heroTag: 'notification_fab',
             elevation: 4,
             foregroundColor: Colors.white,
             backgroundColor: Colors.blueAccent,
@@ -25,6 +26,7 @@ class MyPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           FloatingActionButton(
+            heroTag: 'delete_fab',
             elevation: 4,
             foregroundColor: Colors.white,
             backgroundColor: Colors.redAccent,
