@@ -4,10 +4,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 @pragma('vm:entry-point')
-void notificationTapBackground(NotificationResponse notificationResponse) {
-  // 백그라운드에서 푸시알림 클릭시 실행할 로직
-}
-
+// void notificationTapBackground(NotificationResponse notificationResponse) {
+//   // 백그라운드에서 푸시알림 클릭시 실행할 로직
+// }
 class NotificationHelper {
   static final flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -18,6 +17,7 @@ class NotificationHelper {
     onNotificationTap = callback;
   }
 
+  /// 알림 권한 요청
   static Future<void> requestPermission() async {
     if (Platform.isAndroid) {
       await Permission.notification.request();
@@ -30,6 +30,7 @@ class NotificationHelper {
     }
   }
 
+  /// 알림 초기화
   static Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -58,12 +59,13 @@ class NotificationHelper {
           onNotificationTap!(noti.payload!);
         }
       },
-      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+      // onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
     await _requestAndroidPermissionForOver33();
   }
 
+  /// 안드로이드 13 이상 권한 요청
   static Future<bool?> _requestAndroidPermissionForOver33() async {
     final androidNotificationPlugin =
         flutterLocalNotificationsPlugin
@@ -73,6 +75,7 @@ class NotificationHelper {
     return await androidNotificationPlugin?.requestNotificationsPermission();
   }
 
+  /// 알림 표시
   static Future<void> show(String content, {String? url}) async {
     final packageInfo = await PackageInfo.fromPlatform();
     final appName = packageInfo.appName;

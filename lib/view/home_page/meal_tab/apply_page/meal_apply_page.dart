@@ -41,27 +41,6 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
     _showOrderDialog();
   }
 
-  void _showOrderDialog() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => CupertinoAlertDialog(
-            title: const Text('주문이 완료되었습니다!'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    selectedMealIndex = null;
-                  });
-                },
-                child: const Text('확인'),
-              ),
-            ],
-          ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final meals = getMealsFor(selectedDate, selectedMeal);
@@ -201,6 +180,27 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showOrderDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => CupertinoAlertDialog(
+            title: const Text('주문이 완료되었습니다!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    selectedMealIndex = null;
+                  });
+                },
+                child: const Text('확인'),
+              ),
+            ],
+          ),
     );
   }
 }

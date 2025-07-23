@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../model/meal_order.dart';
+import 'package:musoft_sample_app/model/meal_order.dart';
 
 class MealOrderRepository {
   static const _key = 'meal_orders';
