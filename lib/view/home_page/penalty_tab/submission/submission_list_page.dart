@@ -5,8 +5,6 @@ class ReasonSubmissionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('사유 제출 페이지'),
-    );
+    return const Center(child: Text('사유 제출 페이지'));
   }
 }

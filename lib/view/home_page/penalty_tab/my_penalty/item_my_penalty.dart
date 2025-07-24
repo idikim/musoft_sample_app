@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/submission_page.dart';
 
 class ItemMyPenalty extends StatelessWidget {
   final Penalty penalty;
@@ -74,7 +76,17 @@ class ItemMyPenalty extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onTap: () => onPenaltySelected(penalty),
+                  onTap: () {
+                    if (penalty.status == null) {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) => const SubmissionPage(),
+                        ),
+                      );
+                    } else {
+                      onPenaltySelected(penalty);
+                    }
+                  },
                   child: Container(
                     width: 100,
                     padding: EdgeInsets.symmetric(vertical: 4),

@@ -1,6 +1,6 @@
 class Penalty {
-  final String id;
-  final String title;
+  final String? id;
+  final String? title;
   final String? description;
   final String? status;
   final int points;
@@ -10,8 +10,8 @@ class Penalty {
   final DateTime? approvalDateTime;
 
   Penalty({
-    required this.id,
-    required this.title,
+    this.id,
+    this.title,
     this.description,
     this.status,
     required this.points,

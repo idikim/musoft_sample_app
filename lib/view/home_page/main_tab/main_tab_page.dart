@@ -33,18 +33,19 @@ class HomeTabMainPage extends StatelessWidget {
                     Text(
                       '모의고사 테스트 등급제 안내',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 4),
-                    Text(
-                      '한줄 설명 입력',
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
+                    Text('한줄 설명 입력', style: TextStyle(fontSize: 14)),
                   ],
                 ),
-                const Icon(Icons.image, size: 40, color: Colors.grey),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  color: Colors.black12,
+                  child: Icon(Icons.image, size: 32, color: Colors.grey),
+                ),
               ],
             ),
           ),
@@ -53,13 +54,22 @@ class HomeTabMainPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                Text('메이드님의 순공시간'),
-                Text('6시간 30분'),
-                Text('광진점에서 30명 중 22위'),
+                Text(
+                  '메이드님의 순공시간',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '6시간 30분',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '광진점에서 30명 중 22위',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
           SizedBox(
             height: 200,
             child: Padding(
@@ -101,13 +111,13 @@ class HomeTabMainPage extends StatelessWidget {
                             fitInside: SideTitleFitInsideData.fromTitleMeta(
                               meta,
                             ),
-                            space: 4,
+                            space: 8,
                             meta: meta,
                             child: Text(
                               barData[index]['label'].replaceAll(' ', ''),
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -173,7 +183,7 @@ class HomeTabMainPage extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 12),
         ],
       ),
     );

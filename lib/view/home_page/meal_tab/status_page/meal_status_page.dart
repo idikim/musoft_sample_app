@@ -77,6 +77,12 @@ class MealStatusPage extends ConsumerWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: DropdownButton<int>(
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      dropdownColor: Colors.white,
                       underline: Container(),
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       value: selectedMonth,
