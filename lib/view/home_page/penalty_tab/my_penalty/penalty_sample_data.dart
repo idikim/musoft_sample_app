@@ -20,7 +20,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       date: DateTime(2025, 6, 20, 11, 5),
       reason: '수업 태도 불량',
       points: 3,
-      category: '생활',
+      category: '학습태도',
       status: '승인완료',
     ),
     Penalty(

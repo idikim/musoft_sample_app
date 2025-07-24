@@ -43,15 +43,24 @@ class ItemMyPenalty extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.black12),
                       ),
                       child: Text(
                         penalty.category,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     SizedBox(width: 8),
-                    Text(penalty.status, style: TextStyle(fontSize: 12)),
+                    Text(
+                      penalty.status,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
                 Text(penalty.reason ?? ''),
