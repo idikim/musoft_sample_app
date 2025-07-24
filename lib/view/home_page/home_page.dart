@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _topTabIndex = 0;
   int _mealTabIndex = 0;
+  int _penaltyTabIndex = 0;
   Notice? _selectedNotice;
   bool _isNoticeDetailShown = false;
   bool _isNoticeDetailFullyVisible = false;
@@ -71,12 +72,13 @@ class _HomePageState extends State<HomePage> {
             AnimatedPageWrapper(
               isShown: _isNoticeDetailShown,
               isFullyVisible: _isNoticeDetailFullyVisible,
-              child: _selectedNotice != null
-                  ? NoticeDetailPage(
-                      notice: _selectedNotice!,
-                      onBack: _onBackFromNoticeDetail,
-                    )
-                  : const SizedBox.shrink(),
+              child:
+                  _selectedNotice != null
+                      ? NoticeDetailPage(
+                        notice: _selectedNotice!,
+                        onBack: _onBackFromNoticeDetail,
+                      )
+                      : const SizedBox.shrink(),
             ),
           ],
         ),
@@ -98,7 +100,10 @@ class _HomePageState extends State<HomePage> {
       case 3:
         return const HomeTabAdvantagePage();
       case 4:
-        return const HomeTabPenaltyPage();
+        return HomeTabPenaltyPage(
+          penaltyTabIndex: _penaltyTabIndex,
+          onPenaltyTabChanged: (i) => setState(() => _penaltyTabIndex = i),
+        );
       default:
         return const SizedBox.shrink();
     }

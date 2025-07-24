@@ -7,10 +7,12 @@ import 'package:madezone_study_student_app/helper/notification_helper.dart';
 import 'package:madezone_study_student_app/view/my_page/web_view_page.dart';
 import 'package:madezone_study_student_app/view/stack/stack_page.dart';
 import 'package:madezone_study_student_app/view/app_theme.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await initializeDateFormatting('ko_KR', null);
 
   await NotificationHelper.initAll(
     onNotificationTapCallback: (url) {
