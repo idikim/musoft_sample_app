@@ -80,7 +80,7 @@ class ItemMyPenalty extends StatelessWidget {
                     if (penalty.status == null) {
                       Navigator.of(context).push(
                         CupertinoPageRoute(
-                          builder: (context) => const SubmissionPage(),
+                          builder: (context) => SubmissionPage(penalty: penalty),
                         ),
                       );
                     } else {

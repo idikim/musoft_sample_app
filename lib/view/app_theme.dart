@@ -4,6 +4,7 @@ class AppTheme {
   static Color primaryColor = Colors.blueAccent;
 
   static ThemeData get themeData => ThemeData(
+    fontFamily: 'Pretendard',
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,

@@ -3,6 +3,7 @@ import 'package:madezone_study_student_app/model/penalty.dart';
 List<Penalty> getPenaltiesForMonth(int month) {
   final allPenalties = [
     Penalty(
+      id: '1',
       description: '지각',
       status: '승인완료',
       points: 5,
@@ -12,6 +13,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       approvalDateTime: DateTime(2025, 7, 10, 10, 0),
     ),
     Penalty(
+      id: '2',
       description: '과제 미제출',
       status: '승인대기',
       points: 10,
@@ -20,6 +22,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       submittedAt: DateTime(2025, 7, 15, 14, 30),
     ),
     Penalty(
+      id: '3',
       description: '수업 태도 불량',
       status: '승인완료',
       points: 3,
@@ -29,6 +32,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       approvalDateTime: DateTime(2025, 6, 20, 12, 0),
     ),
     Penalty(
+      id: '4',
       status: '승인대기',
       points: 20,
       category: '외출',
@@ -36,6 +40,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       submittedAt: DateTime(2025, 7, 25, 8, 35),
     ),
     Penalty(
+      id: '5',
       description: '지각',
       status: '승인완료',
       points: 5,
@@ -45,6 +50,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       approvalDateTime: DateTime(2025, 3, 5, 11, 0),
     ),
     Penalty(
+      id: '6',
       description: '지각',
       status: '승인완료',
       points: 5,
@@ -54,6 +60,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       approvalDateTime: DateTime(2025, 9, 5, 14, 0),
     ),
     Penalty(
+      id: '7',
       description: '지각',
       status: '승인대기',
       points: 5,
@@ -62,6 +69,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       submittedAt: DateTime(2025, 1, 5, 9, 25),
     ),
     Penalty(
+      id: '8',
       description: '지각',
       status: '승인완료',
       points: 5,
@@ -71,6 +79,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       approvalDateTime: DateTime(2025, 12, 5, 17, 0),
     ),
     Penalty(
+      id: '9',
       description: '지각',
       status: '승인대기',
       points: 5,
@@ -79,6 +88,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       submittedAt: DateTime(2025, 3, 5, 10, 10),
     ),
     Penalty(
+      id: '10',
       description: '벌점 사유 미제출',
       points: 10,
       category: '학습태도',
