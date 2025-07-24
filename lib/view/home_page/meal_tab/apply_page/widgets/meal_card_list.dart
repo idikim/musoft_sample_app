@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:musoft_sample_app/model/meal.dart';
-import 'package:musoft_sample_app/view/home_page/meal_tab/apply_page/widgets/item_meal_card.dart';
+import 'package:madezone_study_student_app/model/meal.dart';
+import 'package:madezone_study_student_app/view/home_page/meal_tab/apply_page/widgets/item_meal_card.dart';
 
 class MealCardList extends StatefulWidget {
   final int? selectedIndex;

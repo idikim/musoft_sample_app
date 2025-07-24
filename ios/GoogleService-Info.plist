@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>musoft.studycafe.app</string>
+	<string>musoft.madezonestudy.studentapp</string>
 	<key>PROJECT_ID</key>
 	<string>study-cafe-71e65</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1048329795883:ios:7fd1957c143f85f7296d6e</string>
+	<string>1:1048329795883:ios:21764091ad79b666296d6e</string>
 </dict>
 </plist>

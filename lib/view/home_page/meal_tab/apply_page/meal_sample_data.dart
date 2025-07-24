@@ -1,4 +1,4 @@
-import 'package:musoft_sample_app/model/meal.dart';
+import 'package:madezone_study_student_app/model/meal.dart';
 
 List<Meal> getMealsFor(DateTime date, String mealType) {
   final dateKey = '${date.year}-${date.month}-${date.day}';

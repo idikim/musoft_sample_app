@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musoft_sample_app/model/meal_order.dart';
-import 'package:musoft_sample_app/provider/meal_order_provider.dart';
+import 'package:madezone_study_student_app/model/meal_order.dart';
+import 'package:madezone_study_student_app/provider/meal_order_provider.dart';
 import 'widgets/date_picker_bar.dart';
 import 'widgets/meal_card_list.dart';
 import 'meal_sample_data.dart';

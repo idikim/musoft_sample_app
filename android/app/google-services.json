@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1048329795883:android:2562dff71ee5dc3f296d6e",
+        "android_client_info": {
+          "package_name": "musoft.madezonestudy.studentapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcIxEs8Vew0vaKYknje0An_BNz2hg9uM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1048329795883:android:6048c512a611efc8296d6e",
         "android_client_info": {
           "package_name": "musoft.studycafe.app"

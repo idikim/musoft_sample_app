@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:musoft_sample_app/helper/notification_helper.dart';
+import 'package:madezone_study_student_app/helper/notification_helper.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});

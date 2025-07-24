@@ -2,11 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:musoft_sample_app/helper/fcm_helper.dart';
-import 'package:musoft_sample_app/helper/notification_helper.dart';
-import 'package:musoft_sample_app/view/my_page/web_view_page.dart';
-import 'package:musoft_sample_app/view/stack/stack_page.dart';
-import 'package:musoft_sample_app/view/app_theme.dart';
+import 'package:madezone_study_student_app/helper/fcm_helper.dart';
+import 'package:madezone_study_student_app/helper/notification_helper.dart';
+import 'package:madezone_study_student_app/view/my_page/web_view_page.dart';
+import 'package:madezone_study_student_app/view/stack/stack_page.dart';
+import 'package:madezone_study_student_app/view/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

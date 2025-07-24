@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musoft_sample_app/model/notification.dart';
+import 'package:madezone_study_student_app/model/notification.dart';
 
 class NotificationDialog extends StatelessWidget {
   const NotificationDialog({super.key});

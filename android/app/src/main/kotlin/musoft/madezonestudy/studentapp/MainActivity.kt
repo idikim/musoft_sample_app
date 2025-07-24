@@ -1,4 +1,4 @@
-package musoft.studycafe.app
+package musoft.madezonestudy.studentapp
 
 import io.flutter.embedding.android.FlutterActivity
 

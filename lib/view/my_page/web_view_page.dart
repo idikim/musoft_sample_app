@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
-import 'package:musoft_sample_app/view/stack/stack_page.dart';
+import 'package:madezone_study_student_app/view/stack/stack_page.dart';
 
 class WebViewPage extends StatelessWidget {
   final String url;

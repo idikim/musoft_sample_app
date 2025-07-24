@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musoft_sample_app/model/meal_order.dart';
-import 'package:musoft_sample_app/repository/meal_order_repository.dart';
+import 'package:madezone_study_student_app/model/meal_order.dart';
+import 'package:madezone_study_student_app/repository/meal_order_repository.dart';
 
 final mealOrderProvider = FutureProvider<List<MealOrder>>((ref) async {
   return await MealOrderRepository.loadOrders();

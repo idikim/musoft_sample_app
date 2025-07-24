@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:musoft_sample_app/api/user_api.dart';
-import 'package:musoft_sample_app/helper/notification_helper.dart';
+import 'package:madezone_study_student_app/api/user_api.dart';
+import 'package:madezone_study_student_app/helper/notification_helper.dart';
 
 class FcmHelper {
   static void Function(String url)? _onFcmTap;

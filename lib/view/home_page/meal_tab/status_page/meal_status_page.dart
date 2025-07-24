@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musoft_sample_app/provider/meal_order_provider.dart';
+import 'package:madezone_study_student_app/provider/meal_order_provider.dart';
 import 'item_meal_status.dart';
 
 class MealStatusPage extends ConsumerWidget {
