@@ -3,66 +3,107 @@ import 'package:madezone_study_student_app/model/penalty.dart';
 List<Penalty> getPenaltiesForMonth(int month) {
   final allPenalties = [
     Penalty(
-      date: DateTime(2025, 7, 10, 9, 11),
-      reason: '지각',
+      id: '1',
+      title: '지각',
+      description: '지각',
+      status: '승인완료',
       points: 5,
       category: '생활',
-      status: '승인완료',
+      createdAt: DateTime(2025, 7, 10, 9, 11),
+      submittedAt: DateTime(2025, 7, 10, 9, 15),
+      approvalDateTime: DateTime(2025, 7, 10, 10, 0),
     ),
     Penalty(
-      date: DateTime(2025, 7, 15, 14, 25),
-      reason: '과제 미제출',
+      id: '2',
+      title: '과제 미제출',
+      description: '과제 미제출',
+      status: '승인대기',
       points: 10,
       category: '학습',
-      status: '승인대기',
+      createdAt: DateTime(2025, 7, 15, 14, 25),
+      submittedAt: DateTime(2025, 7, 15, 14, 30),
     ),
     Penalty(
-      date: DateTime(2025, 6, 20, 11, 5),
-      reason: '수업 태도 불량',
+      id: '3',
+      title: '수업 태도 불량',
+      description: '수업 태도 불량',
+      status: '승인완료',
       points: 3,
       category: '학습태도',
-      status: '승인완료',
+      createdAt: DateTime(2025, 6, 20, 11, 5),
+      submittedAt: DateTime(2025, 6, 20, 11, 10),
+      approvalDateTime: DateTime(2025, 6, 20, 12, 0),
     ),
     Penalty(
-      date: DateTime(2025, 7, 25, 8, 30),
+      id: '4',
+      title: '외출',
+      status: '승인대기',
       points: 20,
       category: '외출',
-      status: '승인대기',
+      createdAt: DateTime(2025, 7, 25, 8, 30),
+      submittedAt: DateTime(2025, 7, 25, 8, 35),
     ),
     Penalty(
-      date: DateTime(2025, 3, 5, 10, 0),
-      reason: '지각',
-      points: 5,
-      category: '생활',
+      id: '5',
+      title: '지각',
+      description: '지각',
       status: '승인완료',
-    ),
-    Penalty(
-      date: DateTime(2025, 9, 5, 13, 45),
-      reason: '지각',
       points: 5,
       category: '생활',
+      createdAt: DateTime(2025, 3, 5, 10, 0),
+      submittedAt: DateTime(2025, 3, 5, 10, 5),
+      approvalDateTime: DateTime(2025, 3, 5, 11, 0),
+    ),
+    Penalty(
+      id: '6',
+      title: '지각',
+      description: '지각',
       status: '승인완료',
-    ),
-    Penalty(
-      date: DateTime(2025, 1, 5, 9, 20),
-      reason: '지각',
       points: 5,
       category: '생활',
+      createdAt: DateTime(2025, 9, 5, 13, 45),
+      submittedAt: DateTime(2025, 9, 5, 13, 50),
+      approvalDateTime: DateTime(2025, 9, 5, 14, 0),
+    ),
+    Penalty(
+      id: '7',
+      title: '지각',
+      description: '지각',
       status: '승인대기',
-    ),
-    Penalty(
-      date: DateTime(2025, 12, 5, 16, 10),
-      reason: '지각',
       points: 5,
       category: '생활',
+      createdAt: DateTime(2025, 1, 5, 9, 20),
+      submittedAt: DateTime(2025, 1, 5, 9, 25),
+    ),
+    Penalty(
+      id: '8',
+      title: '지각',
+      description: '지각',
       status: '승인완료',
-    ),
-    Penalty(
-      date: DateTime(2025, 3, 5, 10, 5),
-      reason: '지각',
       points: 5,
       category: '생활',
+      createdAt: DateTime(2025, 12, 5, 16, 10),
+      submittedAt: DateTime(2025, 12, 5, 16, 15),
+      approvalDateTime: DateTime(2025, 12, 5, 17, 0),
+    ),
+    Penalty(
+      id: '9',
+      title: '지각',
+      description: '지각',
       status: '승인대기',
+      points: 5,
+      category: '생활',
+      createdAt: DateTime(2025, 3, 5, 10, 5),
+      submittedAt: DateTime(2025, 3, 5, 10, 10),
+    ),
+    Penalty(
+      id: '10',
+      title: '벌점 사유 미제출',
+      description: '벌점 사유 미제출',
+      status: '미제출',
+      points: 10,
+      category: '기타',
+      createdAt: DateTime(2025, 7, 24, 10, 0),
     ),
   ];
 
@@ -70,9 +111,10 @@ List<Penalty> getPenaltiesForMonth(int month) {
   if (month == 0) {
     filteredList = allPenalties;
   } else {
-    filteredList = allPenalties.where((p) => p.date.month == month).toList();
+    filteredList =
+        allPenalties.where((p) => p.createdAt.month == month).toList();
   }
 
-  filteredList.sort((a, b) => a.date.compareTo(b.date));
+  filteredList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
   return filteredList;
 }

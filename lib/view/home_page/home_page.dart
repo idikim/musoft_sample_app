@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:madezone_study_student_app/model/notice.dart';
+import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/view/stack/stack_page.dart';
 import 'package:madezone_study_student_app/view/widgets/animated_page_wrapper.dart';
 import 'widgets/home_tabs.dart';
@@ -9,6 +10,7 @@ import 'meal_tab/meal_tab_page.dart';
 import 'penalty_tab/penalty_tab_page.dart';
 import 'advantage_tab/advantage_tab_page.dart';
 import 'notice_tab/notice_detail_page.dart';
+import 'penalty_tab/my_penalty/penalty_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +26,10 @@ class _HomePageState extends State<HomePage> {
   Notice? _selectedNotice;
   bool _isNoticeDetailShown = false;
   bool _isNoticeDetailFullyVisible = false;
+
+  Penalty? _selectedPenalty;
+  bool _isPenaltyDetailShown = false;
+  bool _isPenaltyDetailFullyVisible = false;
 
   void _onNoticeSelected(Notice notice) {
     setState(() {
@@ -42,6 +48,28 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _selectedNotice = null;
           _isNoticeDetailFullyVisible = false;
+        });
+      }
+    });
+  }
+
+  void _onPenaltySelected(Penalty penalty) {
+    setState(() {
+      _selectedPenalty = penalty;
+      _isPenaltyDetailShown = true;
+      _isPenaltyDetailFullyVisible = true;
+    });
+  }
+
+  void _onBackFromPenaltyDetail() {
+    setState(() {
+      _isPenaltyDetailShown = false;
+    });
+    Future.delayed(AnimatedPageWrapper.pageTransitionDuration, () {
+      if (mounted) {
+        setState(() {
+          _selectedPenalty = null;
+          _isPenaltyDetailFullyVisible = false;
         });
       }
     });
@@ -80,6 +108,17 @@ class _HomePageState extends State<HomePage> {
                       )
                       : const SizedBox.shrink(),
             ),
+            AnimatedPageWrapper(
+              isShown: _isPenaltyDetailShown,
+              isFullyVisible: _isPenaltyDetailFullyVisible,
+              child:
+                  _selectedPenalty != null
+                      ? PenaltyDetailPage(
+                        penalty: _selectedPenalty!,
+                        onBack: _onBackFromPenaltyDetail,
+                      )
+                      : const SizedBox.shrink(),
+            ),
           ],
         ),
       ),
@@ -103,6 +142,7 @@ class _HomePageState extends State<HomePage> {
         return HomeTabPenaltyPage(
           penaltyTabIndex: _penaltyTabIndex,
           onPenaltyTabChanged: (i) => setState(() => _penaltyTabIndex = i),
+          onPenaltySelected: _onPenaltySelected,
         );
       default:
         return const SizedBox.shrink();

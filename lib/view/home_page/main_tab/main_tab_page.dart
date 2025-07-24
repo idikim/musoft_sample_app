@@ -128,24 +128,25 @@ class HomeTabMainPage extends StatelessWidget {
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(show: false),
                   barGroups:
-                      barData
-                          .asMap()
-                          .entries
-                          .map(
-                            (entry) => BarChartGroupData(
-                              x: entry.key,
-                              barRods: [
-                                BarChartRodData(
-                                  toY: entry.value['value'],
-                                  color: Colors.grey[400],
-                                  width: 48,
-                                  borderRadius: BorderRadius.zero,
-                                ),
-                              ],
-                              showingTooltipIndicators: [0],
+                      barData.asMap().entries.map((entry) {
+                        final colors = [
+                          Colors.blue[200],
+                          Colors.red[200],
+                          Colors.amber[200],
+                        ];
+                        return BarChartGroupData(
+                          x: entry.key,
+                          barRods: [
+                            BarChartRodData(
+                              toY: entry.value['value'],
+                              color: colors[entry.key % colors.length],
+                              width: 48,
+                              borderRadius: BorderRadius.circular(4),
                             ),
-                          )
-                          .toList(),
+                          ],
+                          showingTooltipIndicators: [0],
+                        );
+                      }).toList(),
                 ),
               ),
             ),

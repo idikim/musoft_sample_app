@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/widgets/penalty_tab_bar.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/my_penalty_page.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/branch_penalty/branch_penalty_page.dart';
@@ -7,10 +8,12 @@ import 'package:madezone_study_student_app/view/home_page/penalty_tab/reason_sub
 class HomeTabPenaltyPage extends StatelessWidget {
   final int penaltyTabIndex;
   final ValueChanged<int> onPenaltyTabChanged;
+  final ValueChanged<Penalty> onPenaltySelected;
   const HomeTabPenaltyPage({
     super.key,
     required this.penaltyTabIndex,
     required this.onPenaltyTabChanged,
+    required this.onPenaltySelected,
   });
 
   @override
@@ -24,10 +27,10 @@ class HomeTabPenaltyPage extends StatelessWidget {
         Expanded(
           child: IndexedStack(
             index: penaltyTabIndex,
-            children: const [
-              MyPenaltyPage(),
-              BranchPenaltyPage(),
-              ReasonSubmissionPage(),
+            children: [
+              MyPenaltyPage(onPenaltySelected: onPenaltySelected),
+              const BranchPenaltyPage(),
+              const ReasonSubmissionPage(),
             ],
           ),
         ),

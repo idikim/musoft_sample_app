@@ -33,7 +33,8 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
       price: int.tryParse(meal.price.replaceAll(',', '')) ?? 0,
       date: DateTime(selectedDate.year, selectedDate.month, selectedDate.day),
       mealType: selectedMeal,
-      quantity: 1, // Default quantity to 1
+      quantity: 1,
+      status: '주문확인중',
     );
     await ref.read(mealOrderAddProvider).addOrder(order);
     setState(() {

@@ -37,7 +37,7 @@ class _MyPenaltyCalendarPageState extends State<MyPenaltyCalendarPage> {
     _penaltyData.clear();
     final penalties = getPenaltiesForMonth(_focusedDay.month);
     for (var penalty in penalties) {
-      final normalizedDate = _normalizeDate(penalty.date);
+      final normalizedDate = _normalizeDate(penalty.createdAt);
       if (_penaltyData.containsKey(normalizedDate)) {
         _penaltyData[normalizedDate]!.add(penalty);
       } else {

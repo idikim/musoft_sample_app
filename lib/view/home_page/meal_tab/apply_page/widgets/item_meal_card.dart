@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ItemMealCard extends StatelessWidget {
   final String imageUrl;
@@ -61,10 +62,23 @@ class ItemMealCard extends StatelessWidget {
                           ),
                   child: AspectRatio(
                     aspectRatio: 1.25,
-                    child: Image.network(
-                      imageUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
                       fit: BoxFit.cover,
                       alignment: Alignment.topCenter,
+                      placeholder:
+                          (context, url) => const Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                          ),
+                      errorWidget:
+                          (context, url, error) => const Icon(Icons.error),
                     ),
                   ),
                 ),

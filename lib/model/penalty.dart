@@ -1,15 +1,23 @@
 class Penalty {
-  final DateTime date;
-  final String? reason;
+  final String id;
+  final String title;
+  final String? description;
+  final String status;
   final int points;
   final String category;
-  final String status;
+  final DateTime createdAt;
+  final DateTime? submittedAt;
+  final DateTime? approvalDateTime;
 
   Penalty({
-    required this.date,
-    this.reason,
+    required this.id,
+    required this.title,
+    this.description,
+    required this.status,
     required this.points,
     required this.category,
-    required this.status,
+    required this.createdAt,
+    this.submittedAt,
+    this.approvalDateTime,
   });
 }

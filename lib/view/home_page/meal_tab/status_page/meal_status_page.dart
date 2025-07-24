@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/provider/meal_order_provider.dart';
-import 'package:madezone_study_student_app/provider/common_providers.dart'; // Add this line
+import 'package:madezone_study_student_app/provider/common_providers.dart';
 import 'item_meal_status.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/meal_order.dart';
@@ -45,116 +45,123 @@ class MealStatusPage extends ConsumerWidget {
 
         return LayoutBuilder(
           builder: (context, constraints) {
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          onChanged:
-                              (query) =>
-                                  ref.read(searchQueryProvider.notifier).state =
-                                      query,
-                          decoration: InputDecoration(
-                            labelText: '메뉴를 찾아보세요',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(999),
+            return GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            onChanged:
+                                (query) =>
+                                    ref
+                                        .read(searchQueryProvider.notifier)
+                                        .state = query,
+                            decoration: InputDecoration(
+                              labelText: '메뉴를 찾아보세요',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              suffixIcon: Icon(Icons.search),
                             ),
-                            suffixIcon: Icon(Icons.search),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: DropdownButton<int>(
-                    underline: Container(),
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    value: selectedMonth,
-                    items: [
-                      const DropdownMenuItem(value: 0, child: Text('전체')),
-                      for (int i = 1; i <= 12; i++)
-                        DropdownMenuItem(value: i, child: Text('$i월')),
-                    ],
-                    onChanged:
-                        (month) =>
-                            ref.read(selectedMonthProvider.notifier).state =
-                                month!,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: DropdownButton<int>(
+                      underline: Container(),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      value: selectedMonth,
+                      items: [
+                        const DropdownMenuItem(value: 0, child: Text('전체')),
+                        for (int i = 1; i <= 12; i++)
+                          DropdownMenuItem(value: i, child: Text('$i월')),
+                      ],
+                      onChanged:
+                          (month) =>
+                              ref.read(selectedMonthProvider.notifier).state =
+                                  month!,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child:
-                      filteredOrders.isEmpty
-                          ? Center(
-                            child: Text(
-                              '신청 내역이 없습니다.',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                  Expanded(
+                    child:
+                        filteredOrders.isEmpty
+                            ? Center(
+                              child: Text(
+                                '신청 내역이 없습니다.',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                          )
-                          : SingleChildScrollView(
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minHeight: constraints.maxHeight - 100,
-                              ),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 16),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children:
-                                      groupedOrders.entries.map((entry) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 8.0,
+                            )
+                            : SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight - 100,
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children:
+                                        groupedOrders.entries.map((entry) {
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 8.0,
+                                                    ),
+                                                child: Text(
+                                                  DateFormat(
+                                                    'M월 d일',
+                                                  ).format(entry.key),
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                              child: Text(
-                                                DateFormat(
-                                                  'M월 d일',
-                                                ).format(entry.key),
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                            ),
-                                            Column(
-                                              children:
-                                                  entry.value
-                                                      .map(
-                                                        (order) => Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                bottom: 12.0,
-                                                              ),
-                                                          child: ItemMealStatus(
-                                                            order: order,
+                                              Column(
+                                                children:
+                                                    entry.value
+                                                        .map(
+                                                          (order) => Padding(
+                                                            padding:
+                                                                const EdgeInsets.only(
+                                                                  bottom: 12.0,
+                                                                ),
+                                                            child:
+                                                                ItemMealStatus(
+                                                                  order: order,
+                                                                ),
                                                           ),
-                                                        ),
-                                                      )
-                                                      .toList(),
-                                            ),
-                                          ],
-                                        );
-                                      }).toList(),
+                                                        )
+                                                        .toList(),
+                                              ),
+                                            ],
+                                          );
+                                        }).toList(),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                ),
-              ],
+                  ),
+                ],
+              ),
             );
           },
         );

@@ -5,6 +5,7 @@ class MealOrder {
   final DateTime date;
   final String mealType;
   int quantity;
+  final String status;
 
   MealOrder({
     required this.thumbnailUrl,
@@ -13,6 +14,7 @@ class MealOrder {
     required this.date,
     required this.mealType,
     required this.quantity,
+    required this.status,
   });
 
   factory MealOrder.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,7 @@ class MealOrder {
               : (json['quantity'] != null
                   ? int.parse(json['quantity'].toString())
                   : 1),
+      status: (json['status'] as String?) ?? '주문확인중',
     );
   }
 
@@ -43,5 +46,6 @@ class MealOrder {
     'date': date.toIso8601String(),
     'mealType': mealType,
     'quantity': quantity,
+    'status': status,
   };
 }

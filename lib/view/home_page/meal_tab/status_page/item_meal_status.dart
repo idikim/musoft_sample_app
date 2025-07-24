@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/meal_order.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ItemMealStatus extends ConsumerWidget {
   final MealOrder order;
@@ -53,7 +54,7 @@ class ItemMealStatus extends ConsumerWidget {
                 Row(
                   children: [
                     Text(
-                      '개수',
+                      '개수 ',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -86,10 +87,10 @@ class ItemMealStatus extends ConsumerWidget {
                 padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(999),
-                  color: Colors.grey,
+                  color: order.status == '주문확인중' ? Colors.grey : Colors.green,
                 ),
                 child: Text(
-                  '주문확인중',
+                  order.status,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -98,13 +99,24 @@ class ItemMealStatus extends ConsumerWidget {
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  order.thumbnailUrl,
+                child: CachedNetworkImage(
+                  imageUrl: order.thumbnailUrl,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) => Container(
+                  placeholder:
+                      (context, url) => const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            color: Colors.blueAccent,
+                          ),
+                        ),
+                      ),
+                  errorWidget:
+                      (context, url, error) => Container(
                         width: 100,
                         height: 100,
                         color: Colors.grey[300],

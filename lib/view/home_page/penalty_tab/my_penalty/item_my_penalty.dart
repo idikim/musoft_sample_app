@@ -4,12 +4,16 @@ import 'package:madezone_study_student_app/model/penalty.dart';
 
 class ItemMyPenalty extends StatelessWidget {
   final Penalty penalty;
+  final ValueChanged<Penalty> onPenaltySelected;
 
-  const ItemMyPenalty({super.key, required this.penalty});
+  const ItemMyPenalty({
+    super.key,
+    required this.penalty,
+    required this.onPenaltySelected,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isOuting = penalty.category == '외출';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8.0),
@@ -63,33 +67,58 @@ class ItemMyPenalty extends StatelessWidget {
                     ),
                   ],
                 ),
-                Text(penalty.reason ?? ''),
+                Text(penalty.description ?? ''),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 100,
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                    color: isOuting ? Colors.black : Colors.transparent,
-                  ),
-                  child: Center(
-                    child: Text(
-                      isOuting ? '사유 제출하기' : '상세보기',
-                      style: TextStyle(
-                        color: isOuting ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold,
+                if (penalty.status == '미제출')
+                  GestureDetector(
+                    onTap: () => onPenaltySelected(penalty),
+                    child: Container(
+                      width: 100,
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                        color: Colors.black,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '사유 제출하기',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  GestureDetector(
+                    onTap: () => onPenaltySelected(penalty),
+                    child: Container(
+                      width: 100,
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                        color: Colors.transparent,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '상세보기',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
                 SizedBox(height: 8),
                 Text(
-                  DateFormat('a hh:mm', 'ko_KR').format(penalty.date),
+                  DateFormat('a hh:mm', 'ko_KR').format(penalty.createdAt),
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],

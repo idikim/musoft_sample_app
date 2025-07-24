@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/my_penalty_calendar_page.dart';
 
 class MyPenaltyPage extends ConsumerWidget {
-  const MyPenaltyPage({super.key});
+  final ValueChanged<Penalty> onPenaltySelected;
+  const MyPenaltyPage({super.key, required this.onPenaltySelected});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -149,8 +150,10 @@ class MyPenaltyPage extends ConsumerWidget {
                                         ),
                                       ),
                                       ...entry.value.map(
-                                        (penalty) =>
-                                            ItemMyPenalty(penalty: penalty),
+                                        (penalty) => ItemMyPenalty(
+                                          penalty: penalty,
+                                          onPenaltySelected: onPenaltySelected,
+                                        ),
                                       ),
                                     ],
                                   );
@@ -174,9 +177,9 @@ class MyPenaltyPage extends ConsumerWidget {
     final Map<DateTime, List<Penalty>> groupedPenalties = {};
     for (var penalty in penalties) {
       final date = DateTime(
-        penalty.date.year,
-        penalty.date.month,
-        penalty.date.day,
+        penalty.createdAt.year,
+        penalty.createdAt.month,
+        penalty.createdAt.day,
       );
       if (!groupedPenalties.containsKey(date)) {
         groupedPenalties[date] = [];
