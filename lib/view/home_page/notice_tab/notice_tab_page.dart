@@ -1,38 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/notice.dart';
+import 'package:madezone_study_student_app/view/home_page/notice_tab/notice_sample_data.dart';
 
 class HomeTabNoticePage extends StatelessWidget {
   final Function(Notice) onNoticeSelected;
 
   HomeTabNoticePage({super.key, required this.onNoticeSelected});
 
-  final List<Notice> _notices = [
-    Notice(title: '2025 하반기 모의고사 테스트 안내', date: DateTime(2024, 7, 26), category: '공지'),
-    Notice(title: '월간 모의평가 일정 공지', date: DateTime(2024, 7, 25), category: '공지'),
-    Notice(title: '1:1 채팅 시 주의사항 필수 지침서', date: DateTime(2024, 7, 20), category: '공지'),
-    Notice(title: '자습실 공사 안내 일정', date: DateTime(2024, 7, 15), category: '공지'),
-    Notice(title: '2025 하반기 모의고사 테스트 안내', date: DateTime(2024, 7, 26), category: '공지'),
-    Notice(title: '월간 모의평가 일정 공지', date: DateTime(2024, 7, 25), category: '공지'),
-    Notice(title: '1:1 채팅 시 주의사항 필수 지침서', date: DateTime(2024, 7, 20), category: '공지'),
-    Notice(title: '자습실 공사 안내 일정', date: DateTime(2024, 7, 15), category: '공지'),
-    Notice(title: '2025 하반기 모의고사 테스트 안내', date: DateTime(2024, 7, 26), category: '공지'),
-    Notice(title: '월간 모의평가 일정 공지', date: DateTime(2024, 7, 25), category: '공지'),
-    Notice(title: '1:1 채팅 시 주의사항 필수 지침서', date: DateTime(2024, 7, 20), category: '공지'),
-    Notice(title: '자습실 공사 안내 일정', date: DateTime(2024, 7, 15), category: '공지'),
-    Notice(title: '2025 하반기 모의고사 테스트 안내', date: DateTime(2024, 7, 26), category: '공지'),
-    Notice(title: '월간 모의평가 일정 공지', date: DateTime(2024, 7, 25), category: '공지'),
-    Notice(title: '1:1 채팅 시 주의사항 필수 지침서', date: DateTime(2024, 7, 20), category: '공지'),
-    Notice(title: '자습실 공사 안내 일정', date: DateTime(2024, 7, 15), category: '공지'),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      itemCount: _notices.length,
+      itemCount: sampleNotices.length,
       itemBuilder: (context, index) {
-        final notice = _notices[index];
+        final notice = sampleNotices[index];
         return InkWell(
           splashColor: Colors.transparent,
           onTap: () => onNoticeSelected(notice),
@@ -52,9 +34,9 @@ class HomeTabNoticePage extends StatelessWidget {
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      child: const Text(
-                        '공지',
-                        style: TextStyle(
+                      child: Text(
+                        notice.category,
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black54,
                           fontWeight: FontWeight.bold,
