@@ -100,7 +100,6 @@ List<Penalty> getPenaltiesForMonth(int month) {
       id: '10',
       title: '벌점 사유 미제출',
       description: '벌점 사유 미제출',
-      status: '미제출',
       points: 10,
       category: '기타',
       createdAt: DateTime(2025, 7, 24, 10, 0),

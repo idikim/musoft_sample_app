@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/notice.dart';
 
@@ -64,10 +63,7 @@ class NoticeDetailPage extends StatelessWidget {
               const SizedBox(height: 16.0),
               const Divider(),
               const SizedBox(height: 16.0),
-              Text(
-                notice.content,
-                style: TextStyle(fontSize: 16.0),
-              ),
+              Text(notice.content, style: TextStyle(fontSize: 16.0)),
               SizedBox(height: 40),
               GestureDetector(
                 onTap: onBack,

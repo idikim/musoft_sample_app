@@ -14,7 +14,6 @@ class ItemMyPenalty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       margin: const EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
@@ -59,7 +58,7 @@ class ItemMyPenalty extends StatelessWidget {
                     ),
                     SizedBox(width: 8),
                     Text(
-                      penalty.status,
+                      penalty.status ?? '',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -74,48 +73,32 @@ class ItemMyPenalty extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (penalty.status == '미제출')
-                  GestureDetector(
-                    onTap: () => onPenaltySelected(penalty),
-                    child: Container(
-                      width: 100,
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        color: Colors.black,
-                      ),
-                      child: Center(
-                        child: Text(
-                          '사유 제출하기',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                GestureDetector(
+                  onTap: () => onPenaltySelected(penalty),
+                  child: Container(
+                    width: 100,
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(),
+                      color:
+                          penalty.status == null
+                              ? Colors.black
+                              : Colors.transparent,
                     ),
-                  )
-                else
-                  GestureDetector(
-                    onTap: () => onPenaltySelected(penalty),
-                    child: Container(
-                      width: 100,
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        color: Colors.transparent,
-                      ),
-                      child: Center(
-                        child: Text(
-                          '상세보기',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    child: Center(
+                      child: Text(
+                        penalty.status == null ? '사유 제출하기' : '상세보기',
+                        style: TextStyle(
+                          color:
+                              penalty.status == null
+                                  ? Colors.white
+                                  : Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
+                ),
                 SizedBox(height: 8),
                 Text(
                   DateFormat('a hh:mm', 'ko_KR').format(penalty.createdAt),

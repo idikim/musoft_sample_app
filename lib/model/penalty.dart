@@ -2,7 +2,7 @@ class Penalty {
   final String id;
   final String title;
   final String? description;
-  final String status;
+  final String? status;
   final int points;
   final String category;
   final DateTime createdAt;
@@ -13,7 +13,7 @@ class Penalty {
     required this.id,
     required this.title,
     this.description,
-    required this.status,
+    this.status,
     required this.points,
     required this.category,
     required this.createdAt,
