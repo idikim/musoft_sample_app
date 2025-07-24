@@ -33,18 +33,20 @@ class _ReasonSelection extends ConsumerStatefulWidget {
 }
 
 class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
-  String? _selectedReason;
-
   @override
   void initState() {
     super.initState();
-    if (widget.penalty != null) {
-      _selectedReason = widget.penalty!.category;
-    }
+    Future.microtask(() {
+      if (widget.penalty != null) {
+        ref.read(selectedReasonProvider.notifier).state =
+            widget.penalty!.category;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedReason = ref.watch(selectedReasonProvider);
     return Column(
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,41 +60,41 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
           children: [
             _ReasonChip(
               text: '결석',
-              isSelected: _selectedReason == '결석',
+              isSelected: selectedReason == '결석',
               onTap: () {
-                setState(() => _selectedReason = '결석');
+                ref.read(selectedReasonProvider.notifier).state = '결석';
                 ref.read(isAbsenceSelectedProvider.notifier).state = true;
               },
             ),
             _ReasonChip(
               text: '지각',
-              isSelected: _selectedReason == '지각',
+              isSelected: selectedReason == '지각',
               onTap: () {
-                setState(() => _selectedReason = '지각');
+                ref.read(selectedReasonProvider.notifier).state = '지각';
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
             _ReasonChip(
               text: '외출',
-              isSelected: _selectedReason == '외출',
+              isSelected: selectedReason == '외출',
               onTap: () {
-                setState(() => _selectedReason = '외출');
+                ref.read(selectedReasonProvider.notifier).state = '외출';
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
             _ReasonChip(
               text: '조퇴',
-              isSelected: _selectedReason == '조퇴',
+              isSelected: selectedReason == '조퇴',
               onTap: () {
-                setState(() => _selectedReason = '조퇴');
+                ref.read(selectedReasonProvider.notifier).state = '조퇴';
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
             _ReasonChip(
               text: '학습태도',
-              isSelected: _selectedReason == '학습태도',
+              isSelected: selectedReason == '학습태도',
               onTap: () {
-                setState(() => _selectedReason = '학습태도');
+                ref.read(selectedReasonProvider.notifier).state = '학습태도';
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
@@ -133,25 +135,27 @@ class _ReasonChip extends StatelessWidget {
   }
 }
 
-class _DateSelection extends StatefulWidget {
+class _DateSelection extends ConsumerStatefulWidget {
   final Penalty? penalty;
   const _DateSelection({this.penalty});
 
   @override
-  State<_DateSelection> createState() => _DateSelectionState();
+  ConsumerState<_DateSelection> createState() => _DateSelectionState();
 }
 
-class _DateSelectionState extends State<_DateSelection> {
-  late DateTime _selectedDate;
-
+class _DateSelectionState extends ConsumerState<_DateSelection> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.penalty?.createdAt ?? DateTime.now();
+    Future.microtask(() {
+      ref.read(selectedDateProvider.notifier).state =
+          widget.penalty?.createdAt ?? DateTime.now();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedDate = ref.watch(selectedDateProvider);
     return Column(
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,7 +166,7 @@ class _DateSelectionState extends State<_DateSelection> {
             final DateTime? picked = await showCupertinoDialog<DateTime>(
               context: context,
               builder: (BuildContext context) {
-                DateTime tempPickedDate = _selectedDate;
+                DateTime tempPickedDate = selectedDate;
                 return CupertinoTheme(
                   data: const CupertinoThemeData(brightness: Brightness.light),
                   child: CupertinoAlertDialog(
@@ -172,7 +176,7 @@ class _DateSelectionState extends State<_DateSelection> {
                         context: context,
                         locale: const Locale('ko', 'KR'),
                         child: CupertinoDatePicker(
-                          initialDateTime: _selectedDate,
+                          initialDateTime: selectedDate,
                           mode: CupertinoDatePickerMode.date,
                           onDateTimeChanged: (DateTime newDate) {
                             tempPickedDate = newDate;
@@ -198,17 +202,15 @@ class _DateSelectionState extends State<_DateSelection> {
                 );
               },
             );
-            if (picked != null && picked != _selectedDate) {
-              setState(() {
-                _selectedDate = picked;
-              });
+            if (picked != null && picked != selectedDate) {
+              ref.read(selectedDateProvider.notifier).state = picked;
             }
           },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(border: Border.all()),
             child: Text(
-              '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')} ${DateFormat('EEEE', 'ko_KR').format(_selectedDate)}',
+              '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')} ${DateFormat('EEEE', 'ko_KR').format(selectedDate)}',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -226,19 +228,30 @@ class _TimeSelection extends ConsumerStatefulWidget {
 }
 
 class _TimeSelectionState extends ConsumerState<_TimeSelection> {
-  late DateTime _selectedStartTime;
-  late DateTime _selectedEndTime;
-
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _selectedStartTime = DateTime(now.year, now.month, now.day, 0, 0);
-    _selectedEndTime = DateTime(now.year, now.month, now.day, 0, 0);
+    Future.microtask(() {
+      final now = DateTime.now();
+      ref.read(selectedStartTimeProvider.notifier).state = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        0,
+        0,
+      );
+      ref.read(selectedEndTimeProvider.notifier).state = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        0,
+        0,
+      );
+    });
   }
 
-  String _getDurationText() {
-    final Duration duration = _selectedEndTime.difference(_selectedStartTime);
+  String _getDurationText(DateTime startTime, DateTime endTime) {
+    final Duration duration = endTime.difference(startTime);
     final int hours = duration.inHours;
     final int minutes = duration.inMinutes.remainder(60);
     return '$hours시간 $minutes분';
@@ -247,6 +260,8 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
   @override
   Widget build(BuildContext context) {
     final isAbsenceSelected = ref.watch(isAbsenceSelectedProvider);
+    final selectedStartTime = ref.watch(selectedStartTimeProvider);
+    final selectedEndTime = ref.watch(selectedEndTimeProvider);
 
     return Column(
       spacing: 8,
@@ -265,7 +280,7 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
                             await showCupertinoDialog<DateTime>(
                               context: context,
                               builder: (BuildContext context) {
-                                DateTime tempPickedTime = _selectedStartTime;
+                                DateTime tempPickedTime = selectedStartTime;
                                 return CupertinoTheme(
                                   data: const CupertinoThemeData(
                                     brightness: Brightness.light,
@@ -274,7 +289,7 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
                                     content: SizedBox(
                                       height: 200,
                                       child: CupertinoDatePicker(
-                                        initialDateTime: _selectedStartTime,
+                                        initialDateTime: selectedStartTime,
                                         mode: CupertinoDatePickerMode.time,
                                         onDateTimeChanged: (DateTime newTime) {
                                           tempPickedTime = newTime;
@@ -301,15 +316,14 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
                                 );
                               },
                             );
-                        if (picked != null && picked != _selectedStartTime) {
-                          setState(() {
-                            _selectedStartTime = picked;
-                            if (_selectedEndTime.isBefore(_selectedStartTime)) {
-                              _selectedEndTime = _selectedStartTime.add(
-                                const Duration(hours: 1),
-                              );
-                            }
-                          });
+                        if (picked != null && picked != selectedStartTime) {
+                          ref.read(selectedStartTimeProvider.notifier).state =
+                              picked;
+                          if (selectedEndTime.isBefore(picked)) {
+                            ref
+                                .read(selectedEndTimeProvider.notifier)
+                                .state = picked.add(const Duration(hours: 1));
+                          }
                         }
                       },
               child: Container(
@@ -322,7 +336,7 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
                           : Border.all(),
                 ),
                 child: Text(
-                  DateFormat('HH:mm').format(_selectedStartTime),
+                  DateFormat('HH:mm').format(selectedStartTime),
                   style: TextStyle(
                     fontSize: 16,
                     color: isAbsenceSelected ? Colors.black45 : Colors.black,
@@ -340,7 +354,7 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
                             await showCupertinoDialog<DateTime>(
                               context: context,
                               builder: (BuildContext context) {
-                                DateTime tempPickedTime = _selectedEndTime;
+                                DateTime tempPickedTime = selectedEndTime;
                                 return CupertinoTheme(
                                   data: const CupertinoThemeData(
                                     brightness: Brightness.light,
@@ -349,7 +363,7 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
                                     content: SizedBox(
                                       height: 200,
                                       child: CupertinoDatePicker(
-                                        initialDateTime: _selectedEndTime,
+                                        initialDateTime: selectedEndTime,
                                         mode: CupertinoDatePickerMode.time,
                                         onDateTimeChanged: (DateTime newTime) {
                                           tempPickedTime = newTime;
@@ -376,15 +390,13 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
                                 );
                               },
                             );
-                        if (picked != null && picked != _selectedEndTime) {
-                          setState(() {
-                            _selectedEndTime = picked;
-                            if (_selectedEndTime.isBefore(_selectedStartTime)) {
-                              _selectedStartTime = _selectedEndTime.subtract(
-                                const Duration(hours: 1),
-                              );
-                            }
-                          });
+                        if (picked != null && picked != selectedEndTime) {
+                          ref.read(selectedEndTimeProvider.notifier).state =
+                              picked;
+                          if (picked.isBefore(selectedStartTime)) {
+                            ref.read(selectedStartTimeProvider.notifier).state =
+                                picked.subtract(const Duration(hours: 1));
+                          }
                         }
                       },
               child: Container(
@@ -397,7 +409,7 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
                           : Border.all(),
                 ),
                 child: Text(
-                  DateFormat('HH:mm').format(_selectedEndTime),
+                  DateFormat('HH:mm').format(selectedEndTime),
                   style: TextStyle(
                     fontSize: 16,
                     color: isAbsenceSelected ? Colors.black45 : Colors.black,
@@ -406,7 +418,7 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
               ),
             ),
             Text(
-              _getDurationText(),
+              _getDurationText(selectedStartTime, selectedEndTime),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -416,26 +428,30 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
   }
 }
 
-class _ReasonInput extends StatefulWidget {
+class _ReasonInput extends ConsumerStatefulWidget {
   const _ReasonInput();
 
   @override
-  State<_ReasonInput> createState() => _ReasonInputState();
+  ConsumerState<_ReasonInput> createState() => _ReasonInputState();
 }
 
-class _ReasonInputState extends State<_ReasonInput> {
+class _ReasonInputState extends ConsumerState<_ReasonInput> {
   final TextEditingController _controller = TextEditingController();
   int _charCount = 0;
 
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      _controller.text = ref.read(reasonInputProvider);
+    });
     _controller.addListener(_updateCharCount);
   }
 
   void _updateCharCount() {
     setState(() {
       _charCount = _controller.text.length;
+      ref.read(reasonInputProvider.notifier).state = _controller.text;
     });
   }
 

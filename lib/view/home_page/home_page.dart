@@ -11,15 +11,17 @@ import 'penalty_tab/penalty_tab_page.dart';
 import 'advantage_tab/advantage_tab_page.dart';
 import 'notice_tab/notice_detail_page.dart';
 import 'penalty_tab/my_penalty/penalty_detail_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   int _topTabIndex = 0;
   int _mealTabIndex = 0;
   int _penaltyTabIndex = 0;
@@ -143,6 +145,9 @@ class _HomePageState extends State<HomePage> {
           penaltyTabIndex: _penaltyTabIndex,
           onPenaltyTabChanged: (i) => setState(() => _penaltyTabIndex = i),
           onPenaltySelected: _onPenaltySelected,
+          onSubmissionTabSelected: () {
+            ref.read(penaltyReasonsRefreshTrigger.notifier).state++;
+          },
         );
       default:
         return const SizedBox.shrink();

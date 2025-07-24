@@ -9,11 +9,13 @@ class HomeTabPenaltyPage extends StatelessWidget {
   final int penaltyTabIndex;
   final ValueChanged<int> onPenaltyTabChanged;
   final ValueChanged<Penalty> onPenaltySelected;
+  final VoidCallback? onSubmissionTabSelected;
   const HomeTabPenaltyPage({
     super.key,
     required this.penaltyTabIndex,
     required this.onPenaltyTabChanged,
     required this.onPenaltySelected,
+    this.onSubmissionTabSelected,
   });
 
   @override
@@ -22,7 +24,12 @@ class HomeTabPenaltyPage extends StatelessWidget {
       children: [
         PenaltyTabBar(
           penaltyTabIndex: penaltyTabIndex,
-          onPenaltyTabChanged: onPenaltyTabChanged,
+          onPenaltyTabChanged: (index) {
+            onPenaltyTabChanged(index);
+            if (index == 2) {
+              onSubmissionTabSelected?.call();
+            }
+          },
         ),
         Expanded(
           child: IndexedStack(
@@ -30,7 +37,7 @@ class HomeTabPenaltyPage extends StatelessWidget {
             children: [
               MyPenaltyPage(onPenaltySelected: onPenaltySelected),
               const BranchPenaltyPage(),
-              const ReasonSubmissionPage(),
+              const SubmissionListPage(),
             ],
           ),
         ),
