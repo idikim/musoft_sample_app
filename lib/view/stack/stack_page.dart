@@ -6,6 +6,7 @@ import 'package:madezone_study_student_app/view/my_page/my_page.dart';
 import 'package:madezone_study_student_app/view/stack/widgets/bottom_navigation.dart';
 import 'package:madezone_study_student_app/view/home_page/home_page.dart';
 import 'package:madezone_study_student_app/view/home_page/notification/notification_page.dart';
+import 'package:madezone_study_student_app/view/widgets/animated_page_wrapper.dart';
 
 class StackPage extends StatefulWidget {
   const StackPage({super.key});
@@ -43,7 +44,7 @@ class StackPageState extends State<StackPage> {
     setState(() {
       _showNotificationPage = false;
     });
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(AnimatedPageWrapper.pageTransitionDuration, () {
       if (mounted) {
         setState(() {
           _notificationPageFullyVisible = false;
@@ -59,17 +60,10 @@ class StackPageState extends State<StackPage> {
       body: Stack(
         children: [
           _screens[_currentIndex],
-          AnimatedSlide(
-            offset: _showNotificationPage ? Offset.zero : Offset(1, 0),
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.ease,
-            child: IgnorePointer(
-              ignoring: !_showNotificationPage,
-              child: Opacity(
-                opacity: _notificationPageFullyVisible ? 1.0 : 0.0,
-                child: NotificationPage(onBack: hideNotificationPage),
-              ),
-            ),
+          AnimatedPageWrapper(
+            isShown: _showNotificationPage,
+            isFullyVisible: _notificationPageFullyVisible,
+            child: NotificationPage(onBack: hideNotificationPage),
           ),
         ],
       ),
@@ -80,3 +74,4 @@ class StackPageState extends State<StackPage> {
     );
   }
 }
+
