@@ -13,6 +13,7 @@ import 'notice_tab/notice_detail_page.dart';
 import 'penalty_tab/my_penalty/penalty_detail_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
+import 'package:madezone_study_student_app/provider/navigation_providers.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -22,9 +23,7 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  int _topTabIndex = 0;
   int _mealTabIndex = 0;
-  int _penaltyTabIndex = 0;
   Notice? _selectedNotice;
   bool _isNoticeDetailShown = false;
   bool _isNoticeDetailFullyVisible = false;
@@ -79,6 +78,9 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final topTabIndex = ref.watch(homeTopTabIndexProvider);
+    final penaltyTabIndex = ref.watch(penaltyTabIndexProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -88,15 +90,17 @@ class _HomePageState extends ConsumerState<HomePage> {
               children: [
                 HomeTabs(
                   topTabs: TabStrings.topTabs,
-                  topTabIndex: _topTabIndex,
-                  onTopTabChanged: (i) => setState(() => _topTabIndex = i),
+                  topTabIndex: topTabIndex,
+                  onTopTabChanged:
+                      (i) =>
+                          ref.read(homeTopTabIndexProvider.notifier).state = i,
                   onNotificationTap: () {
                     context
                         .findAncestorStateOfType<StackPageState>()
                         ?.showNotificationPage();
                   },
                 ),
-                Expanded(child: _buildTabPage()),
+                Expanded(child: _buildTabPage(topTabIndex, penaltyTabIndex)),
               ],
             ),
             AnimatedPageWrapper(
@@ -127,8 +131,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildTabPage() {
-    switch (_topTabIndex) {
+  Widget _buildTabPage(int topTabIndex, int penaltyTabIndex) {
+    switch (topTabIndex) {
       case 0:
         return const HomeTabMainPage();
       case 1:
@@ -142,8 +146,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         return const HomeTabAdvantagePage();
       case 4:
         return HomeTabPenaltyPage(
-          penaltyTabIndex: _penaltyTabIndex,
-          onPenaltyTabChanged: (i) => setState(() => _penaltyTabIndex = i),
           onPenaltySelected: _onPenaltySelected,
           onSubmissionTabSelected: () {
             ref.read(penaltyReasonsRefreshTrigger.notifier).state++;

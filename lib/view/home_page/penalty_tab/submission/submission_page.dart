@@ -3,8 +3,10 @@ import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step1_page.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step2_page.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step3_page.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
+import 'package:madezone_study_student_app/provider/navigation_providers.dart';
 import 'package:uuid/uuid.dart';
 
 final currentPageIndexProvider = StateProvider<int>((ref) => 0);
@@ -74,8 +76,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
     final penaltyReason = PenaltyReason(
       id: _uuid.v4(),
       category: selectedReason,
-      penaltyId:
-          widget.penalty?.id ?? 'unknown', // 연결된 Penalty ID, 없으면 'unknown'
+      penaltyId: widget.penalty?.id ?? 'unknown',
       startDate: DateTime(
         selectedDate.year,
         selectedDate.month,
@@ -91,13 +92,12 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
         selectedEndTime.minute,
       ),
       description: reasonInput,
-      imageUrl:
-          selectedImagePaths.isNotEmpty
-              ? selectedImagePaths.first
-              : null, // 첫 번째 이미지만 저장
+      imageUrl: selectedImagePaths.isNotEmpty ? selectedImagePaths.first : null,
     );
 
     await repository.savePenaltyReason(penaltyReason);
+
+    ref.read(penaltyReasonsRefreshTrigger.notifier).state++;
 
     // Penalty 모델의 submittedAt 업데이트 (만약 penalty 객체가 있다면)
     if (widget.penalty != null) {
@@ -113,14 +113,17 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
         points: widget.penalty!.points,
         category: widget.penalty!.category,
         createdAt: widget.penalty!.createdAt,
-        submittedAt: DateTime.now(), // 현재 시간으로 업데이트
+        submittedAt: DateTime.now(),
         approvalDateTime: widget.penalty!.approvalDateTime,
       );
       // TODO: updatedPenalty를 저장하거나 서버에 업데이트하는 로직 추가
     }
 
-    // 제출 완료 후 페이지 이동 또는 알림
-    Navigator.of(context).pop(); // 예시: 이전 페이지로 돌아가기
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
+    ref.read(currentPageIndexProvider.notifier).state = 2;
   }
 
   @override
@@ -135,12 +138,18 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
             curve: Curves.ease,
           );
           return false;
+        } else if (currentPageIndex == 2) {
+          Navigator.of(context).pop();
+          return false;
         }
-        _resetProviders(); // Reset providers when popping the page
+        _resetProviders();
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('사유 제출'), centerTitle: true),
+        appBar:
+            currentPageIndex < 2
+                ? AppBar(title: const Text('사유 제출'), centerTitle: true)
+                : null,
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -151,14 +160,17 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
               spacing: 24,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _StepIndicatorBar(currentPageIndex: currentPageIndex),
+                if (currentPageIndex < 2)
+                  _StepIndicatorBar(currentPageIndex: currentPageIndex),
                 SizedBox(
                   height:
                       MediaQuery.of(context).size.height -
-                      AppBar().preferredSize.height -
+                      (currentPageIndex < 2
+                          ? AppBar().preferredSize.height
+                          : 0) -
                       MediaQuery.of(context).padding.top -
                       MediaQuery.of(context).padding.bottom -
-                      170,
+                      (currentPageIndex < 2 ? 170 : 100),
                   child: PageView(
                     controller: _pageController,
                     physics: const NeverScrollableScrollPhysics(),
@@ -168,6 +180,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
                     children: [
                       PenaltySubmissionStep1Page(penalty: widget.penalty),
                       const PenaltySubmissionStep2Page(),
+                      const PenaltySubmissionStep3Page(),
                     ],
                   ),
                 ),
@@ -188,7 +201,6 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
                         curve: Curves.easeIn,
                       );
                     }
-                    // 1단계에서 이전 버튼 누르면 초기화
                     if (currentPageIndex == 0) {
                       ref.read(selectedReasonProvider.notifier).state = null;
                       ref.read(selectedDateProvider.notifier).state =
@@ -216,6 +228,15 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
                     }
                   },
                   onSubmit: _submitPenaltyReason,
+                  onViewSubmissions: () {
+                    ref.read(stackPageIndexProvider.notifier).state = 0;
+                    ref.read(homeTopTabIndexProvider.notifier).state = 4;
+                    ref.read(penaltyTabIndexProvider.notifier).state = 2;
+                    Navigator.of(context).pop();
+                  },
+                  onConfirm: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
               ],
             ),
@@ -286,12 +307,16 @@ class _SubmissionFooter extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onPrevious;
   final VoidCallback onSubmit;
+  final VoidCallback onViewSubmissions;
+  final VoidCallback onConfirm;
 
   const _SubmissionFooter({
     required this.currentPageIndex,
     required this.onNext,
     required this.onPrevious,
     required this.onSubmit,
+    required this.onViewSubmissions,
+    required this.onConfirm,
   });
 
   @override
@@ -302,10 +327,11 @@ class _SubmissionFooter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 8,
         children: [
-          Text(
-            '* 제출 시 부모님께 알림톡이 전송되며, 승인이 완료 되어야 합니다.',
-            style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
-          ),
+          if (currentPageIndex < 2)
+            Text(
+              '* 제출 시 부모님께 알림톡이 전송되며, 승인이 완료 되어야 합니다.',
+              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
+            ),
           if (currentPageIndex == 0)
             GestureDetector(
               onTap: onNext,
@@ -327,7 +353,7 @@ class _SubmissionFooter extends StatelessWidget {
                 ),
               ),
             )
-          else
+          else if (currentPageIndex == 1)
             Row(
               spacing: 8,
               children: [
@@ -365,6 +391,48 @@ class _SubmissionFooter extends StatelessWidget {
                         ),
                         textAlign: TextAlign.center,
                       ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else if (currentPageIndex == 2)
+            Column(
+              spacing: 8,
+              children: [
+                GestureDetector(
+                  onTap: onViewSubmissions,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(border: Border.all()),
+                    width: double.infinity,
+                    child: Text(
+                      '제출 내역보기',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: onConfirm,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(),
+                      color: Colors.black,
+                    ),
+                    width: double.infinity,
+                    child: Text(
+                      '확인',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
