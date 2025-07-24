@@ -22,13 +22,17 @@ class BranchPenaltyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicWidth(
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scaleFactor = screenWidth / 375.0;
+
+    return SizedBox(
+      width: 102 * scaleFactor,
       child: Column(
-        spacing: 12,
+        spacing: 12 * scaleFactor,
         children: [
           Container(
-            padding: EdgeInsets.all(12),
-            height: 102,
+            padding: EdgeInsets.all(12 * scaleFactor),
+            height: 102 * scaleFactor,
             width: double.infinity,
             color: Colors.grey[200],
             child: Column(
@@ -42,34 +46,43 @@ class BranchPenaltyCard extends StatelessWidget {
                       children: [
                         Text(
                           '벌점 $penaltyPoints',
-                          style: TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 12 * scaleFactor),
                         ),
-                        Text('$numberOfStudents명'),
+                        Text(
+                          '$numberOfStudents명',
+                          style: TextStyle(fontSize: 14 * scaleFactor),
+                        ),
                       ],
                     ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [Icon(topIcon, color: topIconColor)],
+                  children: [
+                    Icon(topIcon, color: topIconColor, size: 24 * scaleFactor),
+                  ],
                 ),
               ],
             ),
           ),
           Container(
-            padding: EdgeInsets.all(8),
-            width: 102,
+            padding: EdgeInsets.all(8 * scaleFactor),
+            width: double.infinity,
             decoration: BoxDecoration(border: Border.all()),
             child: Column(
+              spacing: 2,
               children: [
-                Icon(bottomIcon),
-                Text('내가 속한 곳은 여기', style: TextStyle(fontSize: 8)),
+                Icon(bottomIcon, size: 24 * scaleFactor),
+                Text(
+                  '내가 속한 곳은 여기',
+                  style: TextStyle(fontSize: 10 * scaleFactor),
+                ),
                 Text(
                   bottomText,
                   style: TextStyle(
                     color: bottomTextColor,
                     fontWeight: FontWeight.bold,
-                    fontSize: 10,
+                    fontSize: 10 * scaleFactor,
                   ),
                 ),
               ],
