@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _topTabIndex = 2;
+  int _topTabIndex = 0;
   int _mealTabIndex = 0;
 
   @override
