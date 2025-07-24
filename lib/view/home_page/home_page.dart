@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/notification_dialog.dart';
+import 'package:madezone_study_student_app/view/stack/stack_page.dart';
 import 'widgets/home_tabs.dart';
 import 'main_tab/main_tab_page.dart';
 import 'notice_tab/notice_tab_page.dart';
@@ -11,10 +11,10 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _MainViewState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MainViewState extends State<HomePage> {
+class _HomePageState extends State<HomePage> {
   int _topTabIndex = 2;
   int _mealTabIndex = 0;
 
@@ -29,7 +29,11 @@ class _MainViewState extends State<HomePage> {
               topTabs: TabStrings.topTabs,
               topTabIndex: _topTabIndex,
               onTopTabChanged: (i) => setState(() => _topTabIndex = i),
-              onNotificationTap: () => showNotificationDialog(context),
+              onNotificationTap: () {
+                context
+                    .findAncestorStateOfType<StackPageState>()
+                    ?.showNotificationPage();
+              },
             ),
             Expanded(child: _buildTabPage()),
           ],
