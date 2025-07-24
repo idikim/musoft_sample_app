@@ -1,6 +1,6 @@
 {
-    "name": "musoft_sample_web",
-    "short_name": "musoft_sample_web",
+    "name": "madezone_study_student_app",
+    "short_name": "madezone_study_student_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
