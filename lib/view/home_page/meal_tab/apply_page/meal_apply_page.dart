@@ -15,8 +15,6 @@ class MealApplyPage extends ConsumerStatefulWidget {
 }
 
 class _MealApplyPageState extends ConsumerState<MealApplyPage> {
-  DateTime selectedDate = DateTime.now();
-  String selectedMeal = '점심';
   int? selectedMealIndex;
   bool isSaving = false;
 
@@ -25,14 +23,17 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
     setState(() {
       isSaving = true;
     });
+    final selectedDate = ref.read(selectedDateProvider);
+    final selectedMeal = ref.read(selectedMealTypeProvider);
     final meals = getMealsFor(selectedDate, selectedMeal);
     final meal = meals[selectedMealIndex!];
     final order = MealOrder(
       thumbnailUrl: meal.imageUrl,
       menuName: meal.menu,
       price: int.tryParse(meal.price.replaceAll(',', '')) ?? 0,
-      date: selectedDate,
+      date: DateTime(selectedDate.year, selectedDate.month, selectedDate.day),
       mealType: selectedMeal,
+      quantity: 1, // Default quantity to 1
     );
     await ref.read(mealOrderAddProvider).addOrder(order);
     setState(() {
@@ -43,14 +44,16 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedDate = ref.watch(selectedDateProvider);
+    final selectedMeal = ref.watch(selectedMealTypeProvider);
     final meals = getMealsFor(selectedDate, selectedMeal);
     return Column(
       children: [
         DatePickerBar(
           initialDate: selectedDate,
           onDateSelected: (date) {
+            ref.read(selectedDateProvider.notifier).state = date;
             setState(() {
-              selectedDate = date;
               selectedMealIndex = null;
             });
           },
@@ -70,8 +73,8 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
                 text: '점심',
                 selected: selectedMeal == '점심',
                 onTap: () {
+                  ref.read(selectedMealTypeProvider.notifier).state = '점심';
                   setState(() {
-                    selectedMeal = '점심';
                     selectedMealIndex = null;
                   });
                 },
@@ -80,8 +83,8 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
                 text: '저녁',
                 selected: selectedMeal == '저녁',
                 onTap: () {
+                  ref.read(selectedMealTypeProvider.notifier).state = '저녁';
                   setState(() {
-                    selectedMeal = '저녁';
                     selectedMealIndex = null;
                   });
                 },
@@ -127,7 +130,7 @@ class _MealApplyPageState extends ConsumerState<MealApplyPage> {
                       style: ButtonStyle(
                         shape: WidgetStatePropertyAll(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.circular(12),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         backgroundColor: WidgetStatePropertyAll(

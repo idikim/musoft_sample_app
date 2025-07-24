@@ -8,14 +8,29 @@ final mealOrderProvider = FutureProvider<List<MealOrder>>((ref) async {
 
 final mealOrderAddProvider = Provider((ref) => MealOrderAddNotifier(ref));
 
+final selectedDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
+final selectedMealTypeProvider = StateProvider<String>((ref) => '점심');
+
 class MealOrderAddNotifier {
   final Ref ref;
   MealOrderAddNotifier(this.ref);
 
   Future<void> addOrder(MealOrder order) async {
     final orders = await MealOrderRepository.loadOrders();
-    final updated = [...orders, order];
-    await MealOrderRepository.saveOrders(updated);
+    try {
+      final existingOrder = orders.firstWhere(
+        (o) =>
+            o.date.year == order.date.year &&
+            o.date.month == order.date.month &&
+            o.date.day == order.date.day &&
+            o.mealType == order.mealType &&
+            o.menuName == order.menuName,
+      );
+      existingOrder.quantity += order.quantity;
+    } catch (e) {
+      orders.add(order);
+    }
+    await MealOrderRepository.saveOrders(orders);
     ref.invalidate(mealOrderProvider);
   }
 

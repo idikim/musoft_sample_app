@@ -7,18 +7,7 @@ class MealOrderRepository {
 
   static Future<void> saveOrders(List<MealOrder> orders) async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonList =
-        orders
-            .map(
-              (e) => jsonEncode({
-                'thumbnailUrl': e.thumbnailUrl,
-                'menuName': e.menuName,
-                'price': e.price,
-                'date': e.date.toIso8601String(),
-                'mealType': e.mealType,
-              }),
-            )
-            .toList();
+    final jsonList = orders.map((e) => jsonEncode(e.toJson())).toList();
     await prefs.setStringList(_key, jsonList);
   }
 

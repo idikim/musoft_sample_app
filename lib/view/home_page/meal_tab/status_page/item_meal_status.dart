@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/meal_order.dart';
-import 'package:madezone_study_student_app/provider/meal_order_provider.dart';
+import 'package:intl/intl.dart';
 
 class ItemMealStatus extends ConsumerWidget {
   final MealOrder order;
@@ -10,81 +9,114 @@ class ItemMealStatus extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final numberFormat = NumberFormat('#,###');
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
+        color: Colors.black12,
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Stack(
+      padding: EdgeInsets.all(12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Image.network(
-                  order.thumbnailUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) =>
-                          Icon(Icons.fastfood, size: 48),
-                ),
-              ),
-            ),
-            title: Text(
-              order.menuName,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Column(
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('가격 : ${order.price}원'),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    order.mealType,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
                 Text(
-                  '신청일자 : ${order.date.year}-${order.date.month.toString().padLeft(2, '0')}-${order.date.day.toString()} (${order.mealType})',
+                  DateFormat('yyyy년 MM월 dd일').format(order.date),
+                  style: TextStyle(fontSize: 14),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  order.menuName,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(
+                      '개수',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '${order.quantity}개',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '${numberFormat.format(order.price)}원',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              icon: Icon(Icons.close, color: Colors.pinkAccent[100]),
-              iconSize: 20,
-              onPressed: () async {
-                final result = await showDialog<bool>(
-                  context: context,
-                  builder:
-                      (context) => CupertinoAlertDialog(
-                        title: Text('도시락 주문 취소'),
-                        content: Text('도시락 주문을 취소하시겠습니까?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: Text('취소'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            child: Text('확인'),
-                          ),
-                        ],
+          SizedBox(width: 12),
+          Column(
+            spacing: 8,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  color: Colors.grey,
+                ),
+                child: Text(
+                  '주문확인중',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  order.thumbnailUrl,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (context, error, stackTrace) => Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[300],
+                        child: Icon(
+                          Icons.fastfood,
+                          size: 48,
+                          color: Colors.grey[600],
+                        ),
                       ),
-                );
-                if (result == true) {
-                  await ref.read(mealOrderAddProvider).deleteOrder(order);
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('주문이 취소되었습니다.')));
-                }
-              },
-            ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
