@@ -19,7 +19,7 @@ class PenaltySubmissionStep1Page extends ConsumerWidget {
         _ReasonSelection(penalty: penalty),
         _DateSelection(penalty: penalty),
         const _TimeSelection(),
-        const _ReasonInput(),
+        _ReasonInput(),
       ],
     );
   }
@@ -64,7 +64,7 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
               isSelected: selectedReason == PenaltyCategory.absence,
               onTap: () {
                 ref.read(selectedReasonProvider.notifier).state =
-                    '결석' as PenaltyCategory?;
+                    PenaltyCategory.absence;
                 ref.read(isAbsenceSelectedProvider.notifier).state = true;
               },
             ),
@@ -73,7 +73,7 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
               isSelected: selectedReason == PenaltyCategory.tardy,
               onTap: () {
                 ref.read(selectedReasonProvider.notifier).state =
-                    '지각' as PenaltyCategory?;
+                    PenaltyCategory.tardy;
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
@@ -82,7 +82,7 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
               isSelected: selectedReason == PenaltyCategory.outing,
               onTap: () {
                 ref.read(selectedReasonProvider.notifier).state =
-                    '외출' as PenaltyCategory?;
+                    PenaltyCategory.outing;
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
@@ -91,7 +91,7 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
               isSelected: selectedReason == PenaltyCategory.earlyLeave,
               onTap: () {
                 ref.read(selectedReasonProvider.notifier).state =
-                    '조퇴' as PenaltyCategory?;
+                    PenaltyCategory.earlyLeave;
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
@@ -100,7 +100,7 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
               isSelected: selectedReason == PenaltyCategory.learningAttitude,
               onTap: () {
                 ref.read(selectedReasonProvider.notifier).state =
-                    '학습태도' as PenaltyCategory?;
+                    PenaltyCategory.learningAttitude;
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
@@ -448,8 +448,9 @@ class _ReasonInputState extends ConsumerState<_ReasonInput> {
   @override
   void initState() {
     super.initState();
+    _controller.text = '';
     Future.microtask(() {
-      _controller.text = ref.read(reasonInputProvider);
+      ref.read(reasonInputProvider.notifier).state = _controller.text;
     });
     _controller.addListener(_updateCharCount);
   }

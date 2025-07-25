@@ -67,6 +67,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
     final selectedEndTime = ref.read(selectedEndTimeProvider);
     final reasonInput = ref.read(reasonInputProvider);
     final selectedImagePaths = ref.read(selectedImagePathsProvider);
+    final now = DateTime.now();
 
     if (selectedReason == null || reasonInput.isEmpty) {
       // TODO: 사용자에게 필수 필드 입력 알림
@@ -76,7 +77,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
     final penaltyReason = PenaltyReason(
       id: _uuid.v4(),
       category: selectedReason,
-      penaltyId: widget.penalty?.id ?? 'unknown',
+      penaltyId: widget.penalty?.id ?? '',
       startDate: DateTime(
         selectedDate.year,
         selectedDate.month,
@@ -91,29 +92,31 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
         selectedEndTime.hour,
         selectedEndTime.minute,
       ),
-      description: reasonInput,
+      description: widget.penalty?.description,
       imageUrl: selectedImagePaths.isNotEmpty ? selectedImagePaths.first : null,
+      submittedAt: now,
+      userReason: reasonInput,
     );
 
     await repository.savePenaltyReason(penaltyReason);
 
     ref.read(penaltyReasonsRefreshTrigger.notifier).state++;
 
-    // Penalty 모델의 submittedAt 업데이트 (만약 penalty 객체가 있다면)
+    // Penalty 모델의 submittedAt 및 status 업데이트 (만약 penalty 객체가 있다면)
     if (widget.penalty != null) {
       // 실제 Penalty 객체를 업데이트하는 로직이 필요합니다.
       // 현재 Penalty 모델은 final 필드만 가지고 있어 직접 수정이 불가능합니다.
       // API 호출을 통해 서버에 업데이트하거나, 로컬에 Penalty 객체를 관리하는 별도의 Repository가 필요합니다.
-      // 여기서는 예시로 submittedAt을 가진 새로운 Penalty 객체를 생성하는 것으로 대체합니다.
+      // 여기서는 예시로 submittedAt과 status를 가진 새로운 Penalty 객체를 생성하는 것으로 대체합니다.
       final updatedPenalty = Penalty(
         id: widget.penalty!.id,
         title: widget.penalty!.title,
         description: widget.penalty!.description,
-        status: widget.penalty!.status,
+        status: '승인대기',
         points: widget.penalty!.points,
         category: widget.penalty!.category,
         createdAt: widget.penalty!.createdAt,
-        submittedAt: DateTime.now(),
+        submittedAt: now,
         approvalDateTime: widget.penalty!.approvalDateTime,
       );
       // TODO: updatedPenalty를 저장하거나 서버에 업데이트하는 로직 추가

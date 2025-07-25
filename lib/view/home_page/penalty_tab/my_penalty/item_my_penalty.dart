@@ -28,49 +28,55 @@ class ItemMyPenalty extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '-${penalty.points}점',
-                      style: TextStyle(
-                        color: Colors.redAccent,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        '-${penalty.points}점',
+                        style: TextStyle(
+                          color: Colors.redAccent,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
+                      SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          border: Border.all(color: Colors.black12),
+                        ),
+                        child: Text(
+                          penalty.category.displayName,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        border: Border.all(color: Colors.black12),
-                      ),
-                      child: Text(
-                        penalty.category.displayName,
+                      SizedBox(width: 8),
+                      Text(
+                        penalty.status ?? '',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      penalty.status ?? '',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                Text(penalty.description ?? ''),
-              ],
+                    ],
+                  ),
+                  Text(
+                    penalty.description ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/penalty_category.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
 import 'package:madezone_study_student_app/repository/penalty_reason_repository.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/sample_penalty_reasons.dart';
 
 final isAbsenceSelectedProvider = StateProvider<bool>((ref) => false);
 
@@ -36,5 +35,7 @@ final penaltyReasonRepositoryProvider = Provider(
 );
 
 final penaltyReasonsProvider = FutureProvider<List<PenaltyReason>>((ref) async {
-  return samplePenaltyReasons;
+  ref.watch(penaltyReasonsRefreshTrigger);
+  final repository = ref.read(penaltyReasonRepositoryProvider);
+  return repository.getPenaltyReasons();
 });

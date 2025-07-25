@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:madezone_study_student_app/model/penalty.dart';
+import 'package:madezone_study_student_app/model/penalty_reason.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/submission_page.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/item_submission_list.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/sample_penalty_reasons.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/penalty_sample_data.dart';
 
 class SubmissionListPage extends ConsumerWidget {
   const SubmissionListPage({super.key});
@@ -12,6 +14,7 @@ class SubmissionListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final penaltyReasonsAsyncValue = ref.watch(penaltyReasonsProvider);
+    final allPenalties = getPenaltiesForMonth(0);
 
     return Scaffold(
       body: Column(
@@ -67,9 +70,34 @@ class SubmissionListPage extends ConsumerWidget {
                   ],
                 );
               } else {
+                final reasonsWithDescriptions =
+                    penaltyReasons.map((reason) {
+                      final correspondingPenalty = allPenalties.firstWhere(
+                        (penalty) => penalty.id == reason.penaltyId,
+                        orElse:
+                            () => Penalty(
+                              id: reason.penaltyId,
+                              points: 0,
+                              category: reason.category,
+                              createdAt: DateTime.now(),
+                              description: reason.description,
+                            ),
+                      );
+                      return PenaltyReason(
+                        id: reason.id,
+                        category: reason.category,
+                        penaltyId: reason.penaltyId,
+                        startDate: reason.startDate,
+                        endDate: reason.endDate,
+                        description: correspondingPenalty.description ?? '',
+                        imageUrl: reason.imageUrl,
+                        userReason: reason.userReason,
+                      );
+                    }).toList();
+
                 return Expanded(
                   child: ItemSubmissionList(
-                    penaltyReasons: samplePenaltyReasons,
+                    penaltyReasons: reasonsWithDescriptions,
                   ),
                 );
               }

@@ -1,5 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
 
 class ItemSubmissionList extends StatelessWidget {
@@ -26,50 +27,68 @@ class ItemSubmissionList extends StatelessWidget {
               children: [
                 Expanded(
                   child: Column(
+                    spacing: 2,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '카테고리: ${reason.category.displayName}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                      Row(
+                        spacing: 8,
+                        children: [
+                          Text(
+                            DateFormat(
+                              'M월 d일 (E)',
+                              'ko_KR',
+                            ).format(reason.startDate),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              border: Border.all(color: Colors.black12),
+                            ),
+                            child: Text(
+                              reason.category.displayName,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Text('설명: ${reason.description}'),
                       Text(
-                        '시작: ${reason.startDate.toLocal().toString().split(' ')[0]} ${reason.startDate.toLocal().hour}:${reason.startDate.toLocal().minute}',
+                        '${DateFormat('HH:mm').format(reason.startDate.toLocal())} - ${DateFormat('HH:mm').format(reason.endDate.toLocal())}',
                       ),
                       Text(
-                        '종료: ${reason.endDate.toLocal().toString().split(' ')[0]} ${reason.endDate.toLocal().hour}:${reason.endDate.toLocal().minute}',
+                        '벌점 사유 : ${reason.description}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      Text('패널티 ID: ${reason.penaltyId}'),
+                      Text(
+                        '제출 내용 : ${reason.userReason}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ],
                   ),
                 ),
                 if (reason.imageUrl != null)
-                  SizedBox(
+                  Container(
+                    margin: EdgeInsets.only(left: 12),
                     width: 80,
                     height: 80,
                     child: ClipRRect(
                       borderRadius: BorderRadiusGeometry.circular(10),
-                      child: CachedNetworkImage(
-                        imageUrl: reason.imageUrl!,
-                        placeholder:
-                            (context, url) => Container(
-                              color: Colors.grey.shade100,
-                              child: const Center(
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 3,
-                                    color: Colors.blueAccent,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        errorWidget:
-                            (context, url, error) => const Icon(Icons.error),
+                      child: Image.file(
+                        File(reason.imageUrl!),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

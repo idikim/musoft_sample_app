@@ -6,8 +6,10 @@ class PenaltyReason {
   final String penaltyId;
   final DateTime startDate;
   final DateTime endDate;
-  final String description;
+  final String? description;
+  final String userReason;
   final String? imageUrl;
+  final DateTime? submittedAt;
 
   PenaltyReason({
     required this.id,
@@ -15,8 +17,10 @@ class PenaltyReason {
     required this.penaltyId,
     required this.startDate,
     required this.endDate,
-    required this.description,
+    this.description,
+    required this.userReason,
     this.imageUrl,
+    this.submittedAt,
   });
 
   factory PenaltyReason.fromJson(Map<String, dynamic> json) {
@@ -26,8 +30,13 @@ class PenaltyReason {
       penaltyId: json['penaltyId'],
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
-      description: json['description'],
+      description: json['description'] ?? '',
+      userReason: json['userReason'] ?? '',
       imageUrl: json['imageUrl'],
+      submittedAt:
+          json['submittedAt'] != null
+              ? DateTime.parse(json['submittedAt'])
+              : null,
     );
   }
 
@@ -39,7 +48,9 @@ class PenaltyReason {
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
       'description': description,
+      'userReason': userReason,
       'imageUrl': imageUrl,
+      'submittedAt': submittedAt?.toIso8601String(),
     };
   }
 }
