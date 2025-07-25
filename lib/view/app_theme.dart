@@ -15,6 +15,15 @@ class AppTheme {
         fontWeight: FontWeight.bold,
       ),
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStatePropertyAll(Colors.grey.shade200),
+        elevation: WidgetStatePropertyAll(0),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+        ),
+      ),
+    ),
     primaryColor: primaryColor,
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
     useMaterial3: true,

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/penalty_sample_data.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/my_penalty_page.dart'; // Import MyPenaltyPage to access penaltiesProvider
 
-class MyPenaltyCalendarPage extends StatefulWidget {
+class MyPenaltyCalendarPage extends ConsumerStatefulWidget {
   final DateTime initialMonth;
   const MyPenaltyCalendarPage({super.key, required this.initialMonth});
 
   @override
-  State<MyPenaltyCalendarPage> createState() => _MyPenaltyCalendarPageState();
+  ConsumerState<MyPenaltyCalendarPage> createState() =>
+      _MyPenaltyCalendarPageState();
 }
 
-class _MyPenaltyCalendarPageState extends State<MyPenaltyCalendarPage> {
+class _MyPenaltyCalendarPageState extends ConsumerState<MyPenaltyCalendarPage> {
   late DateTime _focusedDay;
   final Map<DateTime, List<Penalty>> _penaltyData = {};
 
@@ -18,7 +20,6 @@ class _MyPenaltyCalendarPageState extends State<MyPenaltyCalendarPage> {
   void initState() {
     super.initState();
     _focusedDay = widget.initialMonth;
-    _loadPenalties();
   }
 
   @override
@@ -28,14 +29,16 @@ class _MyPenaltyCalendarPageState extends State<MyPenaltyCalendarPage> {
         widget.initialMonth.year != oldWidget.initialMonth.year) {
       setState(() {
         _focusedDay = widget.initialMonth;
-        _loadPenalties();
       });
     }
   }
 
-  void _loadPenalties() {
+  void _loadPenalties(List<Penalty> allPenalties) {
     _penaltyData.clear();
-    final penalties = getPenaltiesForMonth(_focusedDay.month);
+    final penalties =
+        allPenalties
+            .where((p) => p.createdAt.month == _focusedDay.month)
+            .toList();
     for (var penalty in penalties) {
       final normalizedDate = _normalizeDate(penalty.createdAt);
       if (_penaltyData.containsKey(normalizedDate)) {
@@ -69,6 +72,9 @@ class _MyPenaltyCalendarPageState extends State<MyPenaltyCalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final allPenalties = ref.watch(penaltiesProvider);
+    _loadPenalties(allPenalties);
+
     return Column(
       children: [
         _buildDaysOfWeekHeader(),
