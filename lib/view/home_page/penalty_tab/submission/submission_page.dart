@@ -129,6 +129,41 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
     ref.read(currentPageIndexProvider.notifier).state = 2;
   }
 
+  void _onNextStep1(BuildContext context) {
+    final selectedReason = ref.read(selectedReasonProvider);
+    final reasonInput = ref.read(reasonInputProvider);
+
+    if (selectedReason == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            '사유를 선택해주세요.',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+
+    if (reasonInput.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            '벌점 사유를 입력해주세요.',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+      ref.read(currentPageIndexProvider.notifier).state = 1;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentPageIndex = ref.watch(currentPageIndexProvider);
@@ -189,14 +224,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
                 ),
                 _SubmissionFooter(
                   currentPageIndex: currentPageIndex,
-                  onNext: () {
-                    if (currentPageIndex < 1) {
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeIn,
-                      );
-                    }
-                  },
+                  onNext: () => _onNextStep1(context),
                   onPrevious: () {
                     if (currentPageIndex > 0) {
                       _pageController.previousPage(
@@ -205,29 +233,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
                       );
                     }
                     if (currentPageIndex == 0) {
-                      ref.read(selectedReasonProvider.notifier).state = null;
-                      ref.read(selectedDateProvider.notifier).state =
-                          DateTime.now();
-                      ref
-                          .read(selectedStartTimeProvider.notifier)
-                          .state = DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
-                        0,
-                        0,
-                      );
-                      ref
-                          .read(selectedEndTimeProvider.notifier)
-                          .state = DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
-                        0,
-                        0,
-                      );
-                      ref.read(reasonInputProvider.notifier).state = '';
-                      ref.read(selectedImagePathsProvider.notifier).state = [];
+                      _resetProviders();
                     }
                   },
                   onSubmit: _submitPenaltyReason,
@@ -305,7 +311,7 @@ class _StepIndicator extends StatelessWidget {
   }
 }
 
-class _SubmissionFooter extends StatelessWidget {
+class _SubmissionFooter extends ConsumerWidget {
   final int currentPageIndex;
   final VoidCallback onNext;
   final VoidCallback onPrevious;
@@ -323,7 +329,10 @@ class _SubmissionFooter extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedReason = ref.watch(selectedReasonProvider);
+    final reasonInput = ref.watch(reasonInputProvider);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
@@ -341,8 +350,14 @@ class _SubmissionFooter extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  border: Border.all(),
-                  color: Colors.black,
+                  border:
+                      (selectedReason != null && reasonInput.isNotEmpty)
+                          ? Border.all(color: Colors.black)
+                          : Border.all(color: Colors.grey),
+                  color:
+                      (selectedReason != null && reasonInput.isNotEmpty)
+                          ? Colors.black
+                          : Colors.grey,
                 ),
                 width: double.infinity,
                 child: Text(
