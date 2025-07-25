@@ -7,9 +7,10 @@ import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
 import 'package:madezone_study_student_app/provider/navigation_providers.dart';
-import 'package:uuid/uuid.dart';
 
 final currentPageIndexProvider = StateProvider<int>((ref) => 0);
+
+int _penaltyReasonIdCounter = 0;
 
 class SubmissionPage extends ConsumerStatefulWidget {
   final Penalty? penalty;
@@ -21,11 +22,13 @@ class SubmissionPage extends ConsumerStatefulWidget {
 
 class _SubmissionPageState extends ConsumerState<SubmissionPage> {
   late PageController _pageController;
-  final Uuid _uuid = Uuid();
 
   @override
   void initState() {
     super.initState();
+    if (widget.penalty != null) {
+      ref.read(currentPageIndexProvider.notifier).state = 0;
+    }
     _pageController = PageController(
       initialPage: ref.read(currentPageIndexProvider),
     );
@@ -74,8 +77,11 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
       return;
     }
 
+    _penaltyReasonIdCounter++;
+    final newPenaltyReasonId = _penaltyReasonIdCounter.toString();
+
     final penaltyReason = PenaltyReason(
-      id: _uuid.v4(),
+      id: newPenaltyReasonId,
       category: selectedReason,
       penaltyId: widget.penalty?.id ?? '',
       startDate: DateTime(
@@ -352,7 +358,7 @@ class _SubmissionFooter extends ConsumerWidget {
                 decoration: BoxDecoration(
                   border:
                       (selectedReason != null && reasonInput.isNotEmpty)
-                          ? Border.all(color: Colors.black)
+                          ? Border.all()
                           : Border.all(color: Colors.grey),
                   color:
                       (selectedReason != null && reasonInput.isNotEmpty)
