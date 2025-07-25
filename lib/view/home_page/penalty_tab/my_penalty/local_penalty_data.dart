@@ -16,11 +16,9 @@ List<Penalty> getPenaltiesForMonth(int month) {
     Penalty(
       id: '2',
       description: '과제 미제출',
-      status: '승인대기',
       points: 10,
       category: PenaltyCategory.learningAttitude,
       createdAt: DateTime(2025, 7, 15, 14, 25),
-      submittedAt: DateTime(2025, 7, 15, 14, 30),
     ),
     Penalty(
       id: '3',

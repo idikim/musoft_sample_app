@@ -1,7 +1,8 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/my_penalty_page.dart'; // Import MyPenaltyPage to access penaltiesProvider
+import 'package:madezone_study_student_app/provider/penalty_provider.dart';
 
 class MyPenaltyCalendarPage extends ConsumerStatefulWidget {
   final DateTime initialMonth;
@@ -137,7 +138,7 @@ class _MyPenaltyCalendarPageState extends ConsumerState<MyPenaltyCalendarPage> {
       dayCells.add(
         GestureDetector(
           onTap: () {
-            print('Tapped on ${day.toIso8601String()}');
+            log('Tapped on ${day.toIso8601String()}');
           },
           child: Container(
             decoration: BoxDecoration(

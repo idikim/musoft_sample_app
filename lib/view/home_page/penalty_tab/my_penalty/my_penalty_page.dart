@@ -1,64 +1,11 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/provider/common_providers.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/local_penalty_data.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/item_my_penalty.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/my_penalty_calendar_page.dart';
-import 'package:path_provider/path_provider.dart';
-
-final penaltiesProvider =
-    StateNotifierProvider<PenaltiesNotifier, List<Penalty>>(
-      (ref) => PenaltiesNotifier(),
-    );
-
-class PenaltiesNotifier extends StateNotifier<List<Penalty>> {
-  PenaltiesNotifier() : super([]) {
-    _loadPenalties();
-  }
-
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/penalties.json');
-  }
-
-  Future<List<Penalty>> _loadPenalties() async {
-    try {
-      final file = await _localFile;
-      if (!await file.exists()) {
-        return [];
-      }
-      final contents = await file.readAsString();
-      final List<dynamic> jsonList = jsonDecode(contents);
-      state = jsonList.map((json) => Penalty.fromJson(json)).toList();
-      return state;
-    } catch (e) {
-      log('Error loading penalties: $e');
-      return [];
-    }
-  }
-
-  Future<File> _savePenalties(List<Penalty> penalties) async {
-    final file = await _localFile;
-    final jsonList = penalties.map((penalty) => penalty.toJson()).toList();
-    return file.writeAsString(jsonEncode(jsonList));
-  }
-
-  Future<void> addSamplePenalties() async {
-    final samplePenalties = getPenaltiesForMonth(0);
-    state = samplePenalties;
-    await _savePenalties(state);
-  }
-}
+import 'package:madezone_study_student_app/provider/penalty_provider.dart';
 
 class MyPenaltyPage extends ConsumerWidget {
   final ValueChanged<Penalty> onPenaltySelected;
@@ -229,6 +176,7 @@ class MyPenaltyPage extends ConsumerWidget {
                                       ),
                                       ...entry.value.map(
                                         (penalty) => ItemMyPenalty(
+                                          key: ValueKey(penalty.id),
                                           penalty: penalty,
                                           onPenaltySelected: onPenaltySelected,
                                         ),

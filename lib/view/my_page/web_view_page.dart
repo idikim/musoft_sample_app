@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
@@ -33,19 +34,19 @@ class WebViewPage extends StatelessWidget {
           ),
           // WebView 네이티브 컴포넌트가 만들어지면 호출됨
           onWebViewCreated: (controller) {
-            print('onWebViewCreated');
+            log('onWebViewCreated');
           },
           // 페이지 로딩이 시작될 때 호출됨
           onLoadStart: (controller, url) {
-            print('onLoadStart');
+            log('onLoadStart');
           },
           // 페이지 로딩이 완료되면 호출됨
           onLoadStop: (controller, url) {
-            print('onLoadStop');
+            log('onLoadStop');
           },
           // 웹뷰 내 웹 페이지에서 GPS, 카메라 등의 권한을 요청했을때 호출됨
           onPermissionRequest: (controller, request) async {
-            print('onPermissionRequest');
+            log('onPermissionRequest');
             return null;
           },
         ),

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:madezone_study_student_app/model/penalty.dart';
+import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step1_page.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step2_page.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step3_page.dart';
-import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
-import 'package:madezone_study_student_app/model/penalty_reason.dart';
 import 'package:madezone_study_student_app/provider/navigation_providers.dart';
 
 final currentPageIndexProvider = StateProvider<int>((ref) => 0);
-
-int _penaltyReasonIdCounter = 0;
 
 class SubmissionPage extends ConsumerStatefulWidget {
   final Penalty? penalty;
@@ -27,7 +24,9 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
   void initState() {
     super.initState();
     if (widget.penalty != null) {
-      ref.read(currentPageIndexProvider.notifier).state = 0;
+      Future.microtask(() {
+        ref.read(currentPageIndexProvider.notifier).state = 0;
+      });
     }
     _pageController = PageController(
       initialPage: ref.read(currentPageIndexProvider),
@@ -38,101 +37,6 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
-  }
-
-  void _resetProviders() {
-    ref.read(currentPageIndexProvider.notifier).state = 0;
-    ref.read(selectedReasonProvider.notifier).state = null;
-    ref.read(selectedDateProvider.notifier).state = DateTime.now();
-    ref.read(selectedStartTimeProvider.notifier).state = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-      0,
-      0,
-    );
-    ref.read(selectedEndTimeProvider.notifier).state = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-      0,
-      0,
-    );
-    ref.read(reasonInputProvider.notifier).state = '';
-    ref.read(selectedImagePathsProvider.notifier).state = [];
-  }
-
-  Future<void> _submitPenaltyReason() async {
-    final repository = ref.read(penaltyReasonRepositoryProvider);
-    final selectedReason = ref.read(selectedReasonProvider);
-    final selectedDate = ref.read(selectedDateProvider);
-    final selectedStartTime = ref.read(selectedStartTimeProvider);
-    final selectedEndTime = ref.read(selectedEndTimeProvider);
-    final reasonInput = ref.read(reasonInputProvider);
-    final selectedImagePaths = ref.read(selectedImagePathsProvider);
-    final now = DateTime.now();
-
-    if (selectedReason == null || reasonInput.isEmpty) {
-      // TODO: 사용자에게 필수 필드 입력 알림
-      return;
-    }
-
-    _penaltyReasonIdCounter++;
-    final newPenaltyReasonId = _penaltyReasonIdCounter.toString();
-
-    final penaltyReason = PenaltyReason(
-      id: newPenaltyReasonId,
-      category: selectedReason,
-      penaltyId: widget.penalty?.id ?? '',
-      startDate: DateTime(
-        selectedDate.year,
-        selectedDate.month,
-        selectedDate.day,
-        selectedStartTime.hour,
-        selectedStartTime.minute,
-      ),
-      endDate: DateTime(
-        selectedDate.year,
-        selectedDate.month,
-        selectedDate.day,
-        selectedEndTime.hour,
-        selectedEndTime.minute,
-      ),
-      description: widget.penalty?.description,
-      imageUrl: selectedImagePaths.isNotEmpty ? selectedImagePaths.first : null,
-      submittedAt: now,
-      userReason: reasonInput,
-    );
-
-    await repository.savePenaltyReason(penaltyReason);
-
-    ref.read(penaltyReasonsRefreshTrigger.notifier).state++;
-
-    // Penalty 모델의 submittedAt 및 status 업데이트 (만약 penalty 객체가 있다면)
-    if (widget.penalty != null) {
-      // 실제 Penalty 객체를 업데이트하는 로직이 필요합니다.
-      // 현재 Penalty 모델은 final 필드만 가지고 있어 직접 수정이 불가능합니다.
-      // API 호출을 통해 서버에 업데이트하거나, 로컬에 Penalty 객체를 관리하는 별도의 Repository가 필요합니다.
-      // 여기서는 예시로 submittedAt과 status를 가진 새로운 Penalty 객체를 생성하는 것으로 대체합니다.
-      final updatedPenalty = Penalty(
-        id: widget.penalty!.id,
-        title: widget.penalty!.title,
-        description: widget.penalty!.description,
-        status: '승인대기',
-        points: widget.penalty!.points,
-        category: widget.penalty!.category,
-        createdAt: widget.penalty!.createdAt,
-        submittedAt: now,
-        approvalDateTime: widget.penalty!.approvalDateTime,
-      );
-      // TODO: updatedPenalty를 저장하거나 서버에 업데이트하는 로직 추가
-    }
-
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeIn,
-    );
-    ref.read(currentPageIndexProvider.notifier).state = 2;
   }
 
   void _onNextStep1(BuildContext context) {
@@ -186,7 +90,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
           Navigator.of(context).pop();
           return false;
         }
-        _resetProviders();
+        ref.read(penaltySubmissionLogicProvider).resetSubmissionData();
         return true;
       },
       child: Scaffold(
@@ -239,10 +143,26 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
                       );
                     }
                     if (currentPageIndex == 0) {
-                      _resetProviders();
+                      ref
+                          .read(penaltySubmissionLogicProvider)
+                          .resetSubmissionData();
                     }
                   },
-                  onSubmit: _submitPenaltyReason,
+                  onSubmit: () {
+                    ref
+                        .read(penaltySubmissionLogicProvider)
+                        .submitPenaltyReason(
+                          penalty: widget.penalty,
+                          onSuccess: () {
+                            _pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeIn,
+                            );
+                            ref.read(currentPageIndexProvider.notifier).state =
+                                2;
+                          },
+                        );
+                  },
                   onViewSubmissions: () {
                     ref.read(stackPageIndexProvider.notifier).state = 0;
                     ref.read(homeTopTabIndexProvider.notifier).state = 4;

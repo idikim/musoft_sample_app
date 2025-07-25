@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
@@ -30,7 +31,7 @@ class ItemSubmissionList extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder:
                     (context) => PenaltyDetailPage(
                       penalty: penalty,
@@ -84,6 +85,10 @@ class ItemSubmissionList extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            // Text(
+                            //   '${reason.id} / ${reason.penaltyId}',
+                            //   style: TextStyle(fontSize: 10),
+                            // ),
                           ],
                         ),
                         Text(
