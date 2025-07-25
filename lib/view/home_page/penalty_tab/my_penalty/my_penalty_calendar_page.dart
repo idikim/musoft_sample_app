@@ -183,7 +183,7 @@ class _MyPenaltyCalendarPageState extends State<MyPenaltyCalendarPage> {
                                               ),
                                             ),
                                             Text(
-                                              penalty.category,
+                                              penalty.category.displayName,
                                               style: const TextStyle(
                                                 fontSize: 12,
                                               ),

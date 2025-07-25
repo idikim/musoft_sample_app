@@ -1,16 +1,18 @@
+import 'package:madezone_study_student_app/model/penalty_category.dart';
+
 class Penalty {
-  final String? id;
+  final String id;
   final String? title;
   final String? description;
   final String? status;
   final int points;
-  final String category;
+  final PenaltyCategory category;
   final DateTime createdAt;
   final DateTime? submittedAt;
   final DateTime? approvalDateTime;
 
   Penalty({
-    this.id,
+    required this.id,
     this.title,
     this.description,
     this.status,

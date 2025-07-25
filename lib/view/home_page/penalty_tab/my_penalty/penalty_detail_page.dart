@@ -47,7 +47,7 @@ class PenaltyDetailPage extends StatelessWidget {
                             border: Border.all(),
                           ),
                           child: Text(
-                            penalty.category,
+                            penalty.category.displayName,
                             style: const TextStyle(fontSize: 12),
                           ),
                         ),

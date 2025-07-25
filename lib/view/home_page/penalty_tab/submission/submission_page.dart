@@ -170,7 +170,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
                           : 0) -
                       MediaQuery.of(context).padding.top -
                       MediaQuery.of(context).padding.bottom -
-                      (currentPageIndex < 2 ? 170 : 100),
+                      (currentPageIndex < 2 ? 170 : 95),
                   child: PageView(
                     controller: _pageController,
                     physics: const NeverScrollableScrollPhysics(),

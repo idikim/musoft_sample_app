@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/submission_page.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/item_submission_list.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/sample_penalty_reasons.dart';
 
 class SubmissionListPage extends ConsumerWidget {
   const SubmissionListPage({super.key});
@@ -67,7 +68,9 @@ class SubmissionListPage extends ConsumerWidget {
                 );
               } else {
                 return Expanded(
-                  child: ItemSubmissionList(penaltyReasons: penaltyReasons),
+                  child: ItemSubmissionList(
+                    penaltyReasons: samplePenaltyReasons,
+                  ),
                 );
               }
             },

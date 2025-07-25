@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:madezone_study_student_app/model/penalty_category.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 
 class PenaltySubmissionStep1Page extends ConsumerWidget {
@@ -39,7 +40,7 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
     Future.microtask(() {
       if (widget.penalty != null) {
         ref.read(selectedReasonProvider.notifier).state =
-            widget.penalty!.category;
+            widget.penalty!.category as PenaltyCategory?;
       }
     });
   }
@@ -60,41 +61,46 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
           children: [
             _ReasonChip(
               text: '결석',
-              isSelected: selectedReason == '결석',
+              isSelected: selectedReason == PenaltyCategory.absence,
               onTap: () {
-                ref.read(selectedReasonProvider.notifier).state = '결석';
+                ref.read(selectedReasonProvider.notifier).state =
+                    '결석' as PenaltyCategory?;
                 ref.read(isAbsenceSelectedProvider.notifier).state = true;
               },
             ),
             _ReasonChip(
               text: '지각',
-              isSelected: selectedReason == '지각',
+              isSelected: selectedReason == PenaltyCategory.tardy,
               onTap: () {
-                ref.read(selectedReasonProvider.notifier).state = '지각';
+                ref.read(selectedReasonProvider.notifier).state =
+                    '지각' as PenaltyCategory?;
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
             _ReasonChip(
               text: '외출',
-              isSelected: selectedReason == '외출',
+              isSelected: selectedReason == PenaltyCategory.outing,
               onTap: () {
-                ref.read(selectedReasonProvider.notifier).state = '외출';
+                ref.read(selectedReasonProvider.notifier).state =
+                    '외출' as PenaltyCategory?;
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
             _ReasonChip(
               text: '조퇴',
-              isSelected: selectedReason == '조퇴',
+              isSelected: selectedReason == PenaltyCategory.earlyLeave,
               onTap: () {
-                ref.read(selectedReasonProvider.notifier).state = '조퇴';
+                ref.read(selectedReasonProvider.notifier).state =
+                    '조퇴' as PenaltyCategory?;
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),
             _ReasonChip(
               text: '학습태도',
-              isSelected: selectedReason == '학습태도',
+              isSelected: selectedReason == PenaltyCategory.learningAttitude,
               onTap: () {
-                ref.read(selectedReasonProvider.notifier).state = '학습태도';
+                ref.read(selectedReasonProvider.notifier).state =
+                    '학습태도' as PenaltyCategory?;
                 ref.read(isAbsenceSelectedProvider.notifier).state = false;
               },
             ),

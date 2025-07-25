@@ -52,7 +52,7 @@ class ItemMyPenalty extends StatelessWidget {
                         border: Border.all(color: Colors.black12),
                       ),
                       child: Text(
-                        penalty.category,
+                        penalty.category.displayName,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -81,9 +81,10 @@ class ItemMyPenalty extends StatelessWidget {
                     if (penalty.status == null) {
                       Navigator.of(context).push(
                         CupertinoPageRoute(
-                          builder: (context) => ProviderScope(
-                            child: SubmissionPage(penalty: penalty),
-                          ),
+                          builder:
+                              (context) => ProviderScope(
+                                child: SubmissionPage(penalty: penalty),
+                              ),
                         ),
                       );
                     } else {

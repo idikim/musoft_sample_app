@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
 
@@ -10,15 +10,18 @@ class ItemSubmissionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      physics: const ClampingScrollPhysics(),
       itemCount: penaltyReasons.length,
       itemBuilder: (context, index) {
         final reason = penaltyReasons[index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.black12)),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
@@ -26,7 +29,7 @@ class ItemSubmissionList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '카테고리: ${reason.category}',
+                        '카테고리: ${reason.category.displayName}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -47,9 +50,27 @@ class ItemSubmissionList extends StatelessWidget {
                   SizedBox(
                     width: 80,
                     height: 80,
-                    child: Image.file(
-                      File(reason.imageUrl!),
-                      fit: BoxFit.cover,
+                    child: ClipRRect(
+                      borderRadius: BorderRadiusGeometry.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: reason.imageUrl!,
+                        placeholder:
+                            (context, url) => Container(
+                              color: Colors.grey.shade100,
+                              child: const Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    color: Colors.blueAccent,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        errorWidget:
+                            (context, url, error) => const Icon(Icons.error),
+                      ),
                     ),
                   ),
               ],

@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:madezone_study_student_app/model/penalty_category.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
 import 'package:madezone_study_student_app/repository/penalty_reason_repository.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/sample_penalty_reasons.dart';
 
 final isAbsenceSelectedProvider = StateProvider<bool>((ref) => false);
 
-final selectedReasonProvider = StateProvider<String?>((ref) => null);
+final selectedReasonProvider = StateProvider<PenaltyCategory?>((ref) => null);
 final selectedDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
 final selectedStartTimeProvider = StateProvider<DateTime>(
   (ref) => DateTime(
@@ -29,10 +31,10 @@ final selectedImagePathsProvider = StateProvider<List<String>>((ref) => []);
 
 final penaltyReasonsRefreshTrigger = StateProvider<int>((ref) => 0);
 
-final penaltyReasonRepositoryProvider = Provider((ref) => PenaltyReasonRepository());
+final penaltyReasonRepositoryProvider = Provider(
+  (ref) => PenaltyReasonRepository(),
+);
 
 final penaltyReasonsProvider = FutureProvider<List<PenaltyReason>>((ref) async {
-  ref.watch(penaltyReasonsRefreshTrigger);
-  final repository = ref.watch(penaltyReasonRepositoryProvider);
-  return repository.getPenaltyReasons();
+  return samplePenaltyReasons;
 });
