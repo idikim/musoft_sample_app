@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step1_page.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step2_page.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/penalty_submission_step3_page.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/steps/penalty_submission_step1_page.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/steps/penalty_submission_step2_page.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/steps/penalty_submission_step3_page.dart';
 import 'package:madezone_study_student_app/provider/navigation_providers.dart';
 
 final currentPageIndexProvider = StateProvider<int>((ref) => 0);
