@@ -23,14 +23,14 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.penalty != null) {
-      Future.microtask(() {
-        ref.read(currentPageIndexProvider.notifier).state = 0;
-      });
+    int initialPageIndex = 0;
+    if (widget.penalty != null && widget.penalty!.status != null) {
+      initialPageIndex = 2;
     }
-    _pageController = PageController(
-      initialPage: ref.read(currentPageIndexProvider),
-    );
+    _pageController = PageController(initialPage: initialPageIndex);
+    Future.microtask(() {
+      ref.read(currentPageIndexProvider.notifier).state = initialPageIndex;
+    });
   }
 
   @override
@@ -43,6 +43,8 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
     final selectedReason = ref.read(selectedReasonProvider);
     final reasonInput = ref.read(reasonInputProvider);
 
+    bool isValid = true;
+
     if (selectedReason == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -53,6 +55,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
           backgroundColor: Colors.red,
         ),
       );
+      isValid = false;
     }
 
     if (reasonInput.isEmpty) {
@@ -65,7 +68,10 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
           backgroundColor: Colors.red,
         ),
       );
-    } else {
+      isValid = false;
+    }
+
+    if (isValid) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,
