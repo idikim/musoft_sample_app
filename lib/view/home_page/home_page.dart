@@ -14,6 +14,7 @@ import 'penalty_tab/my_penalty/penalty_detail_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 import 'package:madezone_study_student_app/provider/navigation_providers.dart';
+import 'package:get/get.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -28,10 +29,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   bool _isNoticeDetailShown = false;
   bool _isNoticeDetailFullyVisible = false;
 
-  Penalty? _selectedPenalty;
-  bool _isPenaltyDetailShown = false;
-  bool _isPenaltyDetailFullyVisible = false;
-
   void _onNoticeSelected(Notice notice) {
     setState(() {
       _selectedNotice = notice;
@@ -44,7 +41,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     setState(() {
       _isNoticeDetailShown = false;
     });
-    Future.delayed(AnimatedPageWrapper.pageTransitionDuration, () {
+    Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
         setState(() {
           _selectedNotice = null;
@@ -55,25 +52,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void _onPenaltySelected(Penalty penalty) {
-    setState(() {
-      _selectedPenalty = penalty;
-      _isPenaltyDetailShown = true;
-      _isPenaltyDetailFullyVisible = true;
-    });
-  }
-
-  void _onBackFromPenaltyDetail() {
-    setState(() {
-      _isPenaltyDetailShown = false;
-    });
-    Future.delayed(AnimatedPageWrapper.pageTransitionDuration, () {
-      if (mounted) {
-        setState(() {
-          _selectedPenalty = null;
-          _isPenaltyDetailFullyVisible = false;
-        });
-      }
-    });
+    Get.to(
+      () => PenaltyDetailPage(penalty: penalty),
+      transition: Transition.rightToLeft,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
   }
 
   @override
@@ -111,17 +95,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ? NoticeDetailPage(
                         notice: _selectedNotice!,
                         onBack: _onBackFromNoticeDetail,
-                      )
-                      : const SizedBox.shrink(),
-            ),
-            AnimatedPageWrapper(
-              isShown: _isPenaltyDetailShown,
-              isFullyVisible: _isPenaltyDetailFullyVisible,
-              child:
-                  _selectedPenalty != null
-                      ? PenaltyDetailPage(
-                        penalty: _selectedPenalty!,
-                        onBack: _onBackFromPenaltyDetail,
                       )
                       : const SizedBox.shrink(),
             ),

@@ -1,8 +1,9 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/provider/penalty_provider.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/penalty_detail_page.dart';
 
 class MyPenaltyCalendarPage extends ConsumerStatefulWidget {
   final DateTime initialMonth;
@@ -87,7 +88,7 @@ class _MyPenaltyCalendarPageState extends ConsumerState<MyPenaltyCalendarPage> {
   Widget _buildDaysOfWeekHeader() {
     final List<String> daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
     return Container(
-      decoration: BoxDecoration(color: Colors.black12),
+      decoration: BoxDecoration(color: Colors.grey.shade200),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
@@ -136,47 +137,56 @@ class _MyPenaltyCalendarPageState extends ConsumerState<MyPenaltyCalendarPage> {
       final List<Penalty> penalties = _penaltyData[_normalizeDate(day)] ?? [];
 
       dayCells.add(
-        GestureDetector(
-          onTap: () {
-            log('Tapped on ${day.toIso8601String()}');
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade200),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(
-                    '${day.day}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color:
-                          isCurrentMonth
-                              ? (day.weekday == DateTime.sunday
-                                  ? Colors.red
-                                  : Colors.black)
-                              : Colors.black26,
-                    ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  '${day.day}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color:
+                        isCurrentMonth
+                            ? (day.weekday == DateTime.sunday
+                                ? Colors.red
+                                : Colors.black)
+                            : Colors.black26,
                   ),
                 ),
-                if (penalties.isNotEmpty)
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children:
-                            penalties
-                                .map(
-                                  (penalty) => Container(
-                                    padding: EdgeInsets.symmetric(vertical: 2),
+              ),
+              if (penalties.isNotEmpty)
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:
+                          penalties
+                              .map(
+                                (penalty) => GestureDetector(
+                                  onTap: () {
+                                Get.to(
+                                  () => PenaltyDetailPage(
+                                    penalty: penalty,
+                                  ),
+                                  transition: Transition.rightToLeft,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.ease,
+                                );
+                              },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 2,
+                                    ),
                                     width: double.infinity,
                                     color: Colors.red.shade50,
                                     child: Row(
                                       children: [
-                                        SizedBox(width: 4),
+                                        const SizedBox(width: 4),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -200,13 +210,13 @@ class _MyPenaltyCalendarPageState extends ConsumerState<MyPenaltyCalendarPage> {
                                       ],
                                     ),
                                   ),
-                                )
-                                .toList(),
-                      ),
+                                ),
+                              )
+                              .toList(),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       );
@@ -221,7 +231,7 @@ class _MyPenaltyCalendarPageState extends ConsumerState<MyPenaltyCalendarPage> {
         final double childAspectRatio = cellWidth / cellHeight;
 
         return GridView.builder(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 7,
             childAspectRatio: childAspectRatio,

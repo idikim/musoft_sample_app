@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,12 +11,9 @@ import 'package:madezone_study_student_app/model/penalty_reason.dart';
 
 class PenaltyDetailPage extends ConsumerWidget {
   final Penalty penalty;
-  final VoidCallback onBack;
-
   const PenaltyDetailPage({
     super.key,
     required this.penalty,
-    required this.onBack,
   });
 
   @override
@@ -42,7 +40,7 @@ class PenaltyDetailPage extends ConsumerWidget {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: onBack,
+          onPressed: () => Get.back(),
         ),
       ),
       body: Column(
