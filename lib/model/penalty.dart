@@ -8,7 +8,7 @@ class Penalty {
   final int points;
   final PenaltyCategory category;
   final DateTime createdAt;
-  final DateTime? submittedAt;
+  final bool isReasonSubmitted;
   final DateTime? approvalDateTime;
 
   Penalty({
@@ -19,7 +19,7 @@ class Penalty {
     required this.points,
     required this.category,
     required this.createdAt,
-    this.submittedAt,
+    this.isReasonSubmitted = false,
     this.approvalDateTime,
   });
 
@@ -35,10 +35,7 @@ class Penalty {
         orElse: () => PenaltyCategory.learningAttitude,
       ),
       createdAt: DateTime.parse(json['createdAt'] as String),
-      submittedAt:
-          json['submittedAt'] != null
-              ? DateTime.parse(json['submittedAt'] as String)
-              : null,
+      isReasonSubmitted: json['isReasonSubmitted'] as bool? ?? false,
       approvalDateTime:
           json['approvalDateTime'] != null
               ? DateTime.parse(json['approvalDateTime'] as String)
@@ -55,7 +52,7 @@ class Penalty {
       'points': points,
       'category': category.toString(),
       'createdAt': createdAt.toIso8601String(),
-      'submittedAt': submittedAt?.toIso8601String(),
+      'isReasonSubmitted': isReasonSubmitted,
       'approvalDateTime': approvalDateTime?.toIso8601String(),
     };
   }

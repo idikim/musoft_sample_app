@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:madezone_study_student_app/provider/penalty_provider.dart';
 
-class ItemSubmissionList extends StatelessWidget {
+class ItemSubmissionList extends ConsumerWidget {
   final List<PenaltyReason> penaltyReasons;
   final Function(Penalty) onPenaltySelected;
 
@@ -15,18 +17,32 @@ class ItemSubmissionList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allPenalties = ref.watch(penaltiesProvider);
+
     return ListView.builder(
       physics: const ClampingScrollPhysics(),
       itemCount: penaltyReasons.length,
       itemBuilder: (context, index) {
         final reason = penaltyReasons[index];
+        final correspondingPenalty = allPenalties.firstWhere(
+          (penalty) => penalty.id == reason.penaltyId,
+          orElse:
+              () => Penalty(
+                id: reason.penaltyId,
+                points: 0,
+                category: reason.category,
+                createdAt: reason.startDate,
+                description: '',
+              ),
+        );
+
         final penalty = Penalty(
           id: reason.penaltyId,
           points: 0,
           category: reason.category,
           createdAt: reason.startDate,
-          description: reason.description,
+          description: correspondingPenalty.description,
           status: null,
           approvalDateTime: null,
         );
@@ -86,11 +102,13 @@ class ItemSubmissionList extends StatelessWidget {
                             // ),
                           ],
                         ),
+                        reason.category.displayName == '결석'
+                            ? Container()
+                            : Text(
+                              '${DateFormat('HH:mm').format(reason.startDate.toLocal())} - ${DateFormat('HH:mm').format(reason.endDate.toLocal())}',
+                            ),
                         Text(
-                          '${DateFormat('HH:mm').format(reason.startDate.toLocal())} - ${DateFormat('HH:mm').format(reason.endDate.toLocal())}',
-                        ),
-                        Text(
-                          '벌점 사유 : ${reason.description}',
+                          '벌점 사유 : ${correspondingPenalty.description}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

@@ -112,7 +112,6 @@ class PenaltySubmissionLogic {
         selectedEndTime.hour,
         selectedEndTime.minute,
       ),
-      description: penalty?.description,
       imageUrl: selectedImagePaths.isNotEmpty ? selectedImagePaths.first : null,
       submittedAt: now,
       userReason: reasonInput,
@@ -134,7 +133,7 @@ class PenaltySubmissionLogic {
         points: penalty.points,
         category: penalty.category,
         createdAt: penalty.createdAt,
-        submittedAt: now,
+        isReasonSubmitted: true,
         approvalDateTime: penalty.approvalDateTime,
       );
       await ref.read(penaltiesProvider.notifier).updatePenalty(updatedPenalty);

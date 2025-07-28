@@ -10,7 +10,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       points: 5,
       category: PenaltyCategory.tardy,
       createdAt: DateTime(2025, 7, 10, 9, 11),
-      submittedAt: DateTime(2025, 7, 10, 9, 15),
+      isReasonSubmitted: true,
       approvalDateTime: DateTime(2025, 7, 10, 10, 0),
     ),
     Penalty(
@@ -27,7 +27,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       points: 3,
       category: PenaltyCategory.learningAttitude,
       createdAt: DateTime(2025, 6, 20, 11, 5),
-      submittedAt: DateTime(2025, 6, 20, 11, 10),
+      isReasonSubmitted: true,
       approvalDateTime: DateTime(2025, 6, 20, 12, 0),
     ),
     Penalty(
@@ -36,7 +36,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       points: 20,
       category: PenaltyCategory.outing,
       createdAt: DateTime(2025, 7, 25, 8, 30),
-      submittedAt: DateTime(2025, 7, 25, 8, 35),
+      isReasonSubmitted: true,
     ),
     Penalty(
       id: '5',
@@ -45,7 +45,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       points: 5,
       category: PenaltyCategory.tardy,
       createdAt: DateTime(2025, 3, 5, 10, 0),
-      submittedAt: DateTime(2025, 3, 5, 10, 5),
+      isReasonSubmitted: true,
       approvalDateTime: DateTime(2025, 3, 5, 11, 0),
     ),
     Penalty(
@@ -55,7 +55,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       points: 5,
       category: PenaltyCategory.tardy,
       createdAt: DateTime(2025, 9, 5, 13, 45),
-      submittedAt: DateTime(2025, 9, 5, 13, 50),
+      isReasonSubmitted: true,
       approvalDateTime: DateTime(2025, 9, 5, 14, 0),
     ),
     Penalty(
@@ -65,7 +65,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       points: 5,
       category: PenaltyCategory.tardy,
       createdAt: DateTime(2025, 1, 5, 9, 20),
-      submittedAt: DateTime(2025, 1, 5, 9, 25),
+      isReasonSubmitted: true,
     ),
     Penalty(
       id: '8',
@@ -74,7 +74,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       points: 5,
       category: PenaltyCategory.tardy,
       createdAt: DateTime(2025, 12, 5, 16, 10),
-      submittedAt: DateTime(2025, 12, 5, 16, 15),
+      isReasonSubmitted: true,
       approvalDateTime: DateTime(2025, 12, 5, 17, 0),
     ),
     Penalty(
@@ -84,7 +84,7 @@ List<Penalty> getPenaltiesForMonth(int month) {
       points: 5,
       category: PenaltyCategory.tardy,
       createdAt: DateTime(2025, 3, 5, 10, 5),
-      submittedAt: DateTime(2025, 3, 5, 10, 10),
+      isReasonSubmitted: true,
     ),
     Penalty(
       id: '10',

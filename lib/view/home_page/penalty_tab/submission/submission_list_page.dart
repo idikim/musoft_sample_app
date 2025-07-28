@@ -74,28 +74,26 @@ class SubmissionListPage extends ConsumerWidget {
               } else {
                 final reasonsWithDescriptions =
                     penaltyReasons.map((reason) {
-                  final correspondingPenalty = allPenalties.firstWhere(
+                      allPenalties.firstWhere(
                         (penalty) => penalty.id == reason.penaltyId,
-                    orElse:
-                        () => Penalty(
-                      id: reason.penaltyId,
-                      points: 0,
-                      category: reason.category,
-                      createdAt: DateTime.now(),
-                      description: reason.description,
-                    ),
-                  );
-                  return PenaltyReason(
-                    id: reason.id,
-                    category: reason.category,
-                    penaltyId: reason.penaltyId,
-                    startDate: reason.startDate,
-                    endDate: reason.endDate,
-                    description: correspondingPenalty.description ?? '',
-                    imageUrl: reason.imageUrl,
-                    userReason: reason.userReason,
-                  );
-                }).toList();
+                        orElse:
+                            () => Penalty(
+                              id: reason.penaltyId,
+                              points: 0,
+                              category: reason.category,
+                              createdAt: DateTime.now(),
+                            ),
+                      );
+                      return PenaltyReason(
+                        id: reason.id,
+                        category: reason.category,
+                        penaltyId: reason.penaltyId,
+                        startDate: reason.startDate,
+                        endDate: reason.endDate,
+                        imageUrl: reason.imageUrl,
+                        userReason: reason.userReason,
+                      );
+                    }).toList();
 
                 return Expanded(
                   child: ItemSubmissionList(

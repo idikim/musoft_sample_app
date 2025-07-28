@@ -84,7 +84,7 @@ class ItemMyPenalty extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    if (penalty.status == null) {
+                    if (!penalty.isReasonSubmitted) {
                       Navigator.of(context).push(
                         CupertinoPageRoute(
                           builder:
@@ -103,16 +103,16 @@ class ItemMyPenalty extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border.all(),
                       color:
-                          penalty.status == null
+                          !penalty.isReasonSubmitted
                               ? Colors.black
                               : Colors.transparent,
                     ),
                     child: Center(
                       child: Text(
-                        penalty.status == null ? '사유 제출하기' : '상세보기',
+                        !penalty.isReasonSubmitted ? '사유 제출하기' : '상세보기',
                         style: TextStyle(
                           color:
-                              penalty.status == null
+                              !penalty.isReasonSubmitted
                                   ? Colors.white
                                   : Colors.black,
                           fontWeight: FontWeight.bold,

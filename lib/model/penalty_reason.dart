@@ -6,7 +6,6 @@ class PenaltyReason {
   final String penaltyId;
   final DateTime startDate;
   final DateTime endDate;
-  final String? description;
   final String userReason;
   final String? imageUrl;
   final DateTime? submittedAt;
@@ -17,7 +16,6 @@ class PenaltyReason {
     required this.penaltyId,
     required this.startDate,
     required this.endDate,
-    this.description,
     required this.userReason,
     this.imageUrl,
     this.submittedAt,
@@ -30,7 +28,6 @@ class PenaltyReason {
       penaltyId: json['penaltyId'],
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
-      description: json['description'] ?? '',
       userReason: json['userReason'] ?? '',
       imageUrl: json['imageUrl'],
       submittedAt:
@@ -47,7 +44,6 @@ class PenaltyReason {
       'penaltyId': penaltyId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
-      'description': description,
       'userReason': userReason,
       'imageUrl': imageUrl,
       'submittedAt': submittedAt?.toIso8601String(),

@@ -24,7 +24,7 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
   void initState() {
     super.initState();
     int initialPageIndex = 0;
-    if (widget.penalty != null && widget.penalty!.status != null) {
+    if (widget.penalty != null && widget.penalty!.isReasonSubmitted) {
       initialPageIndex = 2;
     }
     _pageController = PageController(initialPage: initialPageIndex);
