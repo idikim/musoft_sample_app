@@ -508,7 +508,7 @@ class _ReasonInputState extends ConsumerState<_ReasonInput> {
         ),
         TextField(
           controller: _controller,
-          maxLines: 5,
+          maxLines: 3,
           maxLength: 100,
           decoration: InputDecoration(
             border: OutlineInputBorder(),

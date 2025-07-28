@@ -274,15 +274,18 @@ class PenaltyDetailPage extends ConsumerWidget {
                       ),
                     ),
                     SizedBox(height: 8),
-                    Text(imageUrl.split('/').last),
+                    Text(
+                      imageUrl.split('/').last,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     SizedBox(height: 16),
                     ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * 0.7,
+                        maxHeight: MediaQuery.of(context).size.height * 0.6,
                       ),
-                      child: Container(
+                      child: SizedBox(
                         width: double.infinity,
-                        color: Colors.grey[300],
                         child: Image.file(File(imageUrl), fit: BoxFit.contain),
                       ),
                     ),
