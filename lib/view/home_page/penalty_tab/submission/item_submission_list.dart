@@ -97,7 +97,8 @@ class ItemSubmissionList extends ConsumerWidget {
                             : Text(
                               '${DateFormat('HH:mm').format(reason.startDate.toLocal())} - ${DateFormat('HH:mm').format(reason.endDate.toLocal())}',
                             ),
-                        correspondingPenalty.description == ''
+                        correspondingPenalty.description == '' ||
+                                correspondingPenalty.description == null
                             ? Container()
                             : Text(
                               '벌점 사유 : ${correspondingPenalty.description}',

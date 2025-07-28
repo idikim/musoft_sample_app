@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
-import 'package:madezone_study_student_app/provider/penalty_provider.dart';
+import 'package:madezone_study_student_app/provider/penalty_provider.dart'
+    as pp;
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/submission_page.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/item_submission_list.dart';
@@ -15,14 +16,14 @@ class SubmissionListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final penaltyReasonsAsyncValue = ref.watch(penaltyReasonsProvider);
-    final allPenalties = ref.watch(penaltiesProvider);
+    final allPenalties = ref.watch(pp.penaltiesProvider);
 
     return Scaffold(
       body: Column(
         children: [
-          penaltyReasonsAsyncValue.when(
-            data: (penaltyReasons) {
+          Builder(
+            builder: (context) {
+              final penaltyReasons = ref.watch(pp.penaltyReasonsProvider);
               if (penaltyReasons.isEmpty) {
                 return Column(
                   children: [
@@ -78,7 +79,7 @@ class SubmissionListPage extends ConsumerWidget {
                         (penalty) => penalty.id == reason.penaltyId,
                         orElse:
                             () => Penalty(
-                              id: reason.penaltyId,
+                              id: reason.id,
                               points: 0,
                               category: reason.category,
                               createdAt: DateTime.now(),
@@ -92,8 +93,33 @@ class SubmissionListPage extends ConsumerWidget {
                         endDate: reason.endDate,
                         imageUrls: reason.imageUrls,
                         userReason: reason.userReason,
+                        submittedAt: reason.submittedAt,
                       );
                     }).toList();
+
+                reasonsWithDescriptions.sort((a, b) {
+                  final penaltyA = allPenalties.firstWhere(
+                    (penalty) => penalty.id == a.penaltyId,
+                    orElse:
+                        () => Penalty(
+                          id: a.penaltyId,
+                          points: 0,
+                          category: a.category,
+                          createdAt: DateTime.now(),
+                        ),
+                  );
+                  final penaltyB = allPenalties.firstWhere(
+                    (penalty) => penalty.id == b.penaltyId,
+                    orElse:
+                        () => Penalty(
+                          id: b.penaltyId,
+                          points: 0,
+                          category: b.category,
+                          createdAt: DateTime.now(),
+                        ),
+                  );
+                  return penaltyA.createdAt.compareTo(penaltyB.createdAt);
+                });
 
                 return Expanded(
                   child: ItemSubmissionList(
@@ -103,8 +129,6 @@ class SubmissionListPage extends ConsumerWidget {
                 );
               }
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(child: Text('오류 발생: $error')),
           ),
         ],
       ),

@@ -37,12 +37,6 @@ final penaltyReasonRepositoryProvider = Provider(
   (ref) => PenaltyReasonRepository(),
 );
 
-final penaltyReasonsProvider = FutureProvider<List<PenaltyReason>>((ref) async {
-  ref.watch(penaltyReasonsRefreshTrigger);
-  final repository = ref.read(penaltyReasonRepositoryProvider);
-  return repository.getPenaltyReasons();
-});
-
 final penaltySubmissionLogicProvider = Provider.autoDispose(
   (ref) => PenaltySubmissionLogic(ref),
 );
@@ -120,6 +114,7 @@ class PenaltySubmissionLogic {
     await repository.savePenaltyReason(penaltyReason);
 
     ref.read(penaltyReasonsRefreshTrigger.notifier).state++;
+    ref.read(penaltyReasonsProvider.notifier).refreshPenaltyReasons();
 
     if (penalty != null) {
       log(
