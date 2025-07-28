@@ -6,8 +6,8 @@ import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/provider/penalty_provider.dart'
     as pp;
-import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
+import 'package:madezone_study_student_app/model/penalty_category.dart';
 
 class PenaltyDetailPage extends ConsumerWidget {
   final Penalty penalty;
@@ -16,7 +16,7 @@ class PenaltyDetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final penaltyReasons = ref.watch(pp.penaltyReasonsProvider);
-    final isAbsenceSelected = ref.watch(isAbsenceSelectedProvider);
+    final isAbsenceSelected = penalty.category == PenaltyCategory.absence;
 
     final PenaltyReason correspondingReason = penaltyReasons.firstWhere(
       (reason) => reason.penaltyId == penalty.id,
