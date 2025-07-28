@@ -52,6 +52,8 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
   @override
   Widget build(BuildContext context) {
     final selectedReason = ref.watch(selectedReasonProvider);
+    final bool isPenaltyProvided = widget.penalty != null;
+
     return Column(
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,62 +68,72 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
             _ReasonChip(
               text: '결석',
               isSelected: selectedReason == PenaltyCategory.absence,
-              onTap: () {
-                ref.read(selectedReasonProvider.notifier).state =
-                    PenaltyCategory.absence;
-                ref.read(isAbsenceSelectedProvider.notifier).state = true;
-                final now = DateTime.now();
-                ref.read(selectedStartTimeProvider.notifier).state = DateTime(
-                  now.year,
-                  now.month,
-                  now.day,
-                  0,
-                  0,
-                );
-                ref.read(selectedEndTimeProvider.notifier).state = DateTime(
-                  now.year,
-                  now.month,
-                  now.day,
-                  0,
-                  0,
-                );
-              },
+              onTap:
+                  isPenaltyProvided
+                      ? null
+                      : () {
+                        ref.read(selectedReasonProvider.notifier).state =
+                            PenaltyCategory.absence;
+                        ref.read(isAbsenceSelectedProvider.notifier).state =
+                            true;
+                        final now = DateTime.now();
+                        ref.read(selectedStartTimeProvider.notifier).state =
+                            DateTime(now.year, now.month, now.day, 0, 0);
+                        ref.read(selectedEndTimeProvider.notifier).state =
+                            DateTime(now.year, now.month, now.day, 0, 0);
+                      },
             ),
             _ReasonChip(
               text: '지각',
               isSelected: selectedReason == PenaltyCategory.tardy,
-              onTap: () {
-                ref.read(selectedReasonProvider.notifier).state =
-                    PenaltyCategory.tardy;
-                ref.read(isAbsenceSelectedProvider.notifier).state = false;
-              },
+              onTap:
+                  isPenaltyProvided
+                      ? null
+                      : () {
+                        ref.read(selectedReasonProvider.notifier).state =
+                            PenaltyCategory.tardy;
+                        ref.read(isAbsenceSelectedProvider.notifier).state =
+                            false;
+                      },
             ),
             _ReasonChip(
               text: '외출',
               isSelected: selectedReason == PenaltyCategory.outing,
-              onTap: () {
-                ref.read(selectedReasonProvider.notifier).state =
-                    PenaltyCategory.outing;
-                ref.read(isAbsenceSelectedProvider.notifier).state = false;
-              },
+              onTap:
+                  isPenaltyProvided
+                      ? null
+                      : () {
+                        ref.read(selectedReasonProvider.notifier).state =
+                            PenaltyCategory.outing;
+                        ref.read(isAbsenceSelectedProvider.notifier).state =
+                            false;
+                      },
             ),
             _ReasonChip(
               text: '조퇴',
               isSelected: selectedReason == PenaltyCategory.earlyLeave,
-              onTap: () {
-                ref.read(selectedReasonProvider.notifier).state =
-                    PenaltyCategory.earlyLeave;
-                ref.read(isAbsenceSelectedProvider.notifier).state = false;
-              },
+              onTap:
+                  isPenaltyProvided
+                      ? null
+                      : () {
+                        ref.read(selectedReasonProvider.notifier).state =
+                            PenaltyCategory.earlyLeave;
+                        ref.read(isAbsenceSelectedProvider.notifier).state =
+                            false;
+                      },
             ),
             _ReasonChip(
               text: '학습태도',
               isSelected: selectedReason == PenaltyCategory.learningAttitude,
-              onTap: () {
-                ref.read(selectedReasonProvider.notifier).state =
-                    PenaltyCategory.learningAttitude;
-                ref.read(isAbsenceSelectedProvider.notifier).state = false;
-              },
+              onTap:
+                  isPenaltyProvided
+                      ? null
+                      : () {
+                        ref.read(selectedReasonProvider.notifier).state =
+                            PenaltyCategory.learningAttitude;
+                        ref.read(isAbsenceSelectedProvider.notifier).state =
+                            false;
+                      },
             ),
           ],
         ),
@@ -181,62 +193,84 @@ class _DateSelectionState extends ConsumerState<_DateSelection> {
   @override
   Widget build(BuildContext context) {
     final selectedDate = ref.watch(selectedDateProvider);
+    final bool isPenaltyProvided = widget.penalty != null;
+
     return Column(
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('날짜', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         GestureDetector(
-          onTap: () async {
-            final DateTime? picked = await showCupertinoDialog<DateTime>(
-              context: context,
-              builder: (BuildContext context) {
-                DateTime tempPickedDate = selectedDate;
-                return CupertinoTheme(
-                  data: const CupertinoThemeData(brightness: Brightness.light),
-                  child: CupertinoAlertDialog(
-                    content: SizedBox(
-                      height: 200,
-                      child: Localizations.override(
-                        context: context,
-                        locale: const Locale('ko', 'KR'),
-                        child: CupertinoDatePicker(
-                          initialDateTime: selectedDate,
-                          mode: CupertinoDatePickerMode.date,
-                          onDateTimeChanged: (DateTime newDate) {
-                            tempPickedDate = newDate;
+          onTap:
+              isPenaltyProvided
+                  ? null
+                  : () async {
+                    final DateTime? picked =
+                        await showCupertinoDialog<DateTime>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            DateTime tempPickedDate = selectedDate;
+                            return CupertinoTheme(
+                              data: const CupertinoThemeData(
+                                brightness: Brightness.light,
+                                textTheme: CupertinoTextThemeData(
+                                  dateTimePickerTextStyle: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                              child: CupertinoAlertDialog(
+                                content: SizedBox(
+                                  height: 200,
+                                  child: Localizations.override(
+                                    context: context,
+                                    locale: const Locale('ko', 'KR'),
+                                    child: CupertinoDatePicker(
+                                      initialDateTime: selectedDate,
+                                      mode: CupertinoDatePickerMode.date,
+                                      onDateTimeChanged: (DateTime newDate) {
+                                        tempPickedDate = newDate;
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                actions: <CupertinoDialogAction>[
+                                  CupertinoDialogAction(
+                                    child: const Text('취소'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  CupertinoDialogAction(
+                                    child: const Text('선택'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(tempPickedDate);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
                           },
-                        ),
-                      ),
-                    ),
-                    actions: <CupertinoDialogAction>[
-                      CupertinoDialogAction(
-                        child: const Text('취소'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      CupertinoDialogAction(
-                        child: const Text('선택'),
-                        onPressed: () {
-                          Navigator.of(context).pop(tempPickedDate);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-            if (picked != null && picked != selectedDate) {
-              ref.read(selectedDateProvider.notifier).state = picked;
-            }
-          },
+                        );
+                    if (picked != null && picked != selectedDate) {
+                      ref.read(selectedDateProvider.notifier).state = picked;
+                    }
+                  },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(border: Border.all()),
+            decoration: BoxDecoration(
+              border:
+                  isPenaltyProvided
+                      ? Border.all(color: Colors.grey[300]!)
+                      : Border.all(),
+              color: isPenaltyProvided ? Colors.grey[300] : null,
+            ),
             child: Text(
               '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')} ${DateFormat('EEEE', 'ko_KR').format(selectedDate)}',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(
+                fontSize: 16,
+                color: isPenaltyProvided ? Colors.black45 : Colors.black,
+              ),
             ),
           ),
         ),

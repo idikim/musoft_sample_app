@@ -11,10 +11,7 @@ import 'package:madezone_study_student_app/model/penalty_reason.dart';
 
 class PenaltyDetailPage extends ConsumerWidget {
   final Penalty penalty;
-  const PenaltyDetailPage({
-    super.key,
-    required this.penalty,
-  });
+  const PenaltyDetailPage({super.key, required this.penalty});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -187,6 +184,7 @@ class PenaltyDetailPage extends ConsumerWidget {
                         ),
                       ),
                     ),
+                    Text('-'),
                     Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
