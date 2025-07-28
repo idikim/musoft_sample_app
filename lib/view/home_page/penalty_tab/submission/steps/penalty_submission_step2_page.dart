@@ -16,6 +16,14 @@ class _PenaltySubmissionStep2PageState
     extends ConsumerState<PenaltySubmissionStep2Page> {
   final ImagePicker _picker = ImagePicker();
 
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(selectedImagePathsProvider.notifier).state = [];
+    });
+  }
+
   Future<void> _pickImage() async {
     final currentImages = ref.read(selectedImagePathsProvider);
     if (currentImages.length >= 3) {
@@ -127,4 +135,3 @@ class _PenaltySubmissionStep2PageState
     );
   }
 }
-

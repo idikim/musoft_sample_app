@@ -37,19 +37,9 @@ class ItemSubmissionList extends ConsumerWidget {
               ),
         );
 
-        final penalty = Penalty(
-          id: reason.penaltyId,
-          points: 0,
-          category: reason.category,
-          createdAt: reason.startDate,
-          description: correspondingPenalty.description,
-          status: null,
-          approvalDateTime: null,
-        );
-
         return GestureDetector(
           onTap: () {
-            onPenaltySelected(penalty);
+            onPenaltySelected(correspondingPenalty);
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -107,11 +97,13 @@ class ItemSubmissionList extends ConsumerWidget {
                             : Text(
                               '${DateFormat('HH:mm').format(reason.startDate.toLocal())} - ${DateFormat('HH:mm').format(reason.endDate.toLocal())}',
                             ),
-                        Text(
-                          '벌점 사유 : ${correspondingPenalty.description}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        correspondingPenalty.description == ''
+                            ? Container()
+                            : Text(
+                              '벌점 사유 : ${correspondingPenalty.description}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                         Text(
                           '제출 내용 : ${reason.userReason}',
                           maxLines: 1,
@@ -120,7 +112,7 @@ class ItemSubmissionList extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  if (reason.imageUrl != null)
+                  if (reason.imageUrls != null && reason.imageUrls!.isNotEmpty)
                     Container(
                       margin: EdgeInsets.only(left: 12),
                       width: 80,
@@ -128,7 +120,7 @@ class ItemSubmissionList extends ConsumerWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadiusGeometry.circular(10),
                         child: Image.file(
-                          File(reason.imageUrl!),
+                          File(reason.imageUrls![0]),
                           fit: BoxFit.cover,
                         ),
                       ),

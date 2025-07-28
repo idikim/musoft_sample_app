@@ -112,7 +112,7 @@ class PenaltySubmissionLogic {
         selectedEndTime.hour,
         selectedEndTime.minute,
       ),
-      imageUrl: selectedImagePaths.isNotEmpty ? selectedImagePaths.first : null,
+      imageUrls: selectedImagePaths.isNotEmpty ? selectedImagePaths : null,
       submittedAt: now,
       userReason: reasonInput,
     );

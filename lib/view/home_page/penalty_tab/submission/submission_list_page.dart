@@ -90,7 +90,7 @@ class SubmissionListPage extends ConsumerWidget {
                         penaltyId: reason.penaltyId,
                         startDate: reason.startDate,
                         endDate: reason.endDate,
-                        imageUrl: reason.imageUrl,
+                        imageUrls: reason.imageUrls,
                         userReason: reason.userReason,
                       );
                     }).toList();

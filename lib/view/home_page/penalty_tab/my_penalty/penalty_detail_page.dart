@@ -1,8 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
+import 'package:madezone_study_student_app/model/penalty_reason.dart';
 
-class PenaltyDetailPage extends StatelessWidget {
+class PenaltyDetailPage extends ConsumerWidget {
   final Penalty penalty;
   final VoidCallback onBack;
 
@@ -13,7 +17,12 @@ class PenaltyDetailPage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final penaltyReasonsAsyncValue = ref.watch(penaltyReasonsProvider);
+    final isAbsenceSelected = ref.watch(isAbsenceSelectedProvider);
+    final selectedStartTime = ref.watch(selectedStartTimeProvider);
+    final selectedEndTime = ref.watch(selectedEndTimeProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('사유 제출 내역 상세보기'),
@@ -23,153 +32,242 @@ class PenaltyDetailPage extends StatelessWidget {
           onPressed: onBack,
         ),
       ),
-      body: Column(
-        spacing: 20,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            child: Column(
-              spacing: 12,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(DateFormat('yyyy-MM-dd').format(penalty.createdAt)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: penaltyReasonsAsyncValue.when(
+        data: (penaltyReasons) {
+          final PenaltyReason correspondingReason = penaltyReasons.firstWhere(
+            (reason) => reason.penaltyId == penalty.id,
+            orElse:
+                () => PenaltyReason(
+                  id: '',
+                  category: penalty.category,
+                  penaltyId: '',
+                  startDate: DateTime.now(),
+                  endDate: DateTime.now(),
+                  userReason: '',
+                ),
+          );
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                child: Column(
+                  spacing: 12,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(999),
-                            border: Border.all(),
-                          ),
-                          child: Text(
-                            penalty.category.displayName,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ),
-                        Text(
-                          '-${penalty.points}점',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    Text(DateFormat('yyyy-MM-dd').format(penalty.createdAt)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
-                          spacing: 4,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
+                                horizontal: 4,
                               ),
                               decoration: BoxDecoration(
-                                border:
-                                    penalty.status == null
-                                        ? Border.fromBorderSide(BorderSide.none)
-                                        : Border.all(),
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(),
                               ),
                               child: Text(
-                                penalty.status ?? '',
+                                penalty.category.displayName,
                                 style: const TextStyle(fontSize: 12),
                               ),
                             ),
                             Text(
-                              penalty.approvalDateTime != null
-                                  ? DateFormat(
-                                    'a hh:mm',
-                                    'ko_KR',
-                                  ).format(penalty.approvalDateTime!)
-                                  : '',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
+                              penalty.points == 0
+                                  ? (penalty.category.displayName == '지각' ||
+                                          penalty.category.displayName == '조퇴'
+                                      ? '-5점'
+                                      : '-10점')
+                                  : '-${penalty.points}점',
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.redAccent,
                               ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Column(
+                              spacing: 4,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border:
+                                        !penalty.isReasonSubmitted
+                                            ? Border.fromBorderSide(
+                                              BorderSide.none,
+                                            )
+                                            : Border.all(),
+                                  ),
+                                  child: Text(
+                                    penalty.status ?? '',
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                                Text(
+                                  penalty.approvalDateTime != null
+                                      ? DateFormat(
+                                        'a hh:mm',
+                                        'ko_KR',
+                                      ).format(penalty.approvalDateTime!)
+                                      : '',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ],
                     ),
+
+                    penalty.description == ''
+                        ? Container()
+                        : Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(color: Colors.grey[200]),
+                            child: Text('사유: ${penalty.description}'),
+                          ),
+                        ),
                   ],
                 ),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(color: Colors.grey[200]),
-                  child: Text('사유: ${penalty.description}'),
-                ),
-              ],
-            ),
-          ),
-          Divider(color: Colors.grey[300], thickness: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-              spacing: 12,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('날짜'),
-                Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(border: Border.all()),
-                  child: Text(
-                    DateFormat(
-                      'yyyy-MM-dd E요일',
-                      'ko_KR',
-                    ).format(penalty.createdAt),
-                  ),
-                ),
-                Text('시간'),
-                Row(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Divider(color: Colors.grey[300], thickness: 8),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
                   spacing: 12,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text('날짜'),
                     Container(
                       padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(border: Border.all()),
                       child: Text(
-                        DateFormat('HH:mm').format(penalty.createdAt),
+                        DateFormat(
+                          'yyyy-MM-dd E요일',
+                          'ko_KR',
+                        ).format(correspondingReason.startDate),
                       ),
                     ),
+                    Text('시간'),
+                    Row(
+                      spacing: 12,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: isAbsenceSelected ? Colors.grey[300] : null,
+                            border:
+                                isAbsenceSelected
+                                    ? Border.all(color: Colors.grey[300]!)
+                                    : Border.all(),
+                          ),
+                          child: Text(
+                            DateFormat(
+                              'HH:mm',
+                            ).format(correspondingReason.startDate),
+                            style: TextStyle(
+                              color:
+                                  isAbsenceSelected
+                                      ? Colors.black45
+                                      : Colors.black,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: isAbsenceSelected ? Colors.grey[300] : null,
+                            border:
+                                isAbsenceSelected
+                                    ? Border.all(color: Colors.grey[300]!)
+                                    : Border.all(),
+                          ),
+                          child: Text(
+                            DateFormat(
+                              'HH:mm',
+                            ).format(correspondingReason.endDate),
+                            style: TextStyle(
+                              color:
+                                  isAbsenceSelected
+                                      ? Colors.black45
+                                      : Colors.black,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          _getDurationText(selectedStartTime, selectedEndTime),
+                          style: TextStyle(
+                            color:
+                                isAbsenceSelected
+                                    ? Colors.black45
+                                    : Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text('내가 제출한 사유'),
                     Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(border: Border.all()),
-                      child: Text(
-                        DateFormat('HH:mm').format(penalty.createdAt),
-                      ),
+                      width: double.infinity,
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(color: Colors.grey[200]),
+                      child: Text(correspondingReason.userReason),
                     ),
-                    Text('N시간 N분'),
+
+                    correspondingReason.imageUrls != null
+                        ? Text('첨부파일')
+                        : Container(),
+                    Row(
+                      spacing: 8,
+                      children: [
+                        if (correspondingReason.imageUrls != null)
+                          ...correspondingReason.imageUrls!.map(
+                            (imageUrl) => attachedImage(context, imageUrl),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
-                Text('내가 제출한 사유'),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: Colors.grey[200]),
-                  child: Text('집에 급한 일이 생겨서 오늘은 조퇴하겠습니다!'),
-                ),
-                Text('첨부파일'),
-                Row(
-                  spacing: 8,
-                  children: [attachedImage(context), attachedImage(context)],
-                ),
-              ],
-            ),
-          ),
-        ],
+              ),
+            ],
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text('Error: $error')),
       ),
     );
   }
 
-  Widget attachedImage(context) {
+  Widget attachedImage(BuildContext context, String? imageUrl) {
+    if (imageUrl == null) {
+      return const SizedBox.shrink();
+    }
     return GestureDetector(
       onTap: () {
         showDialog(
@@ -194,16 +292,16 @@ class PenaltyDetailPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 8),
-                    Text('dock2025078060000.jpeg'),
+                    Text(imageUrl.split('/').last),
                     SizedBox(height: 16),
-                    Container(
-                      width: double.infinity,
-                      height: 300,
-                      color: Colors.grey[300],
-                      child: Icon(
-                        Icons.image,
-                        color: Colors.grey[500],
-                        size: 50,
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.7,
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        color: Colors.grey[300],
+                        child: Image.file(File(imageUrl), fit: BoxFit.contain),
                       ),
                     ),
                     SizedBox(height: 16),
@@ -240,8 +338,15 @@ class PenaltyDetailPage extends StatelessWidget {
         width: 100,
         height: 100,
         color: Colors.black12,
-        child: Icon(Icons.photo, color: Colors.grey),
+        child: Image.file(File(imageUrl), fit: BoxFit.cover),
       ),
     );
+  }
+
+  String _getDurationText(DateTime startTime, DateTime endTime) {
+    final Duration duration = endTime.difference(startTime);
+    final int hours = duration.inHours;
+    final int minutes = duration.inMinutes.remainder(60);
+    return '$hours시간 $minutes분';
   }
 }

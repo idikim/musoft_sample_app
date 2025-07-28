@@ -39,8 +39,12 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
     super.initState();
     Future.microtask(() {
       if (widget.penalty != null) {
-        ref.read(selectedReasonProvider.notifier).state =
-            widget.penalty!.category as PenaltyCategory?;
+        final initialCategory = widget.penalty!.category;
+        ref.read(selectedReasonProvider.notifier).state = initialCategory;
+        ref.read(isAbsenceSelectedProvider.notifier).state =
+            initialCategory == PenaltyCategory.absence;
+      } else {
+        ref.read(isAbsenceSelectedProvider.notifier).state = false;
       }
     });
   }
@@ -66,6 +70,21 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
                 ref.read(selectedReasonProvider.notifier).state =
                     PenaltyCategory.absence;
                 ref.read(isAbsenceSelectedProvider.notifier).state = true;
+                final now = DateTime.now();
+                ref.read(selectedStartTimeProvider.notifier).state = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  0,
+                  0,
+                );
+                ref.read(selectedEndTimeProvider.notifier).state = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  0,
+                  0,
+                );
               },
             ),
             _ReasonChip(
@@ -425,7 +444,10 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
             ),
             Text(
               _getDurationText(selectedStartTime, selectedEndTime),
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isAbsenceSelected ? Colors.black45 : Colors.black,
+              ),
             ),
           ],
         ),

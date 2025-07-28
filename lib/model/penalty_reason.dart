@@ -7,7 +7,7 @@ class PenaltyReason {
   final DateTime startDate;
   final DateTime endDate;
   final String userReason;
-  final String? imageUrl;
+  final List<String>? imageUrls;
   final DateTime? submittedAt;
 
   PenaltyReason({
@@ -17,7 +17,7 @@ class PenaltyReason {
     required this.startDate,
     required this.endDate,
     required this.userReason,
-    this.imageUrl,
+    this.imageUrls,
     this.submittedAt,
   });
 
@@ -29,7 +29,10 @@ class PenaltyReason {
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
       userReason: json['userReason'] ?? '',
-      imageUrl: json['imageUrl'],
+      imageUrls:
+          (json['imageUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
       submittedAt:
           json['submittedAt'] != null
               ? DateTime.parse(json['submittedAt'])
@@ -45,7 +48,7 @@ class PenaltyReason {
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
       'userReason': userReason,
-      'imageUrl': imageUrl,
+      'imageUrls': imageUrls,
       'submittedAt': submittedAt?.toIso8601String(),
     };
   }
