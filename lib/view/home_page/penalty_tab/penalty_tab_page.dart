@@ -37,7 +37,7 @@ class HomeTabPenaltyPage extends ConsumerWidget {
             children: [
               MyPenaltyPage(onPenaltySelected: onPenaltySelected),
               const BranchPenaltyPage(),
-              const SubmissionListPage(),
+              SubmissionListPage(onPenaltySelected: onPenaltySelected),
             ],
           ),
         ),

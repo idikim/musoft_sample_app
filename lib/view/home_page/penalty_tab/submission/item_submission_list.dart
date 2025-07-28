@@ -1,15 +1,18 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/penalty_reason.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/penalty_detail_page.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 
 class ItemSubmissionList extends StatelessWidget {
   final List<PenaltyReason> penaltyReasons;
+  final Function(Penalty) onPenaltySelected;
 
-  const ItemSubmissionList({super.key, required this.penaltyReasons});
+  const ItemSubmissionList({
+    super.key,
+    required this.penaltyReasons,
+    required this.onPenaltySelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +33,7 @@ class ItemSubmissionList extends StatelessWidget {
 
         return GestureDetector(
           onTap: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder:
-                    (context) => PenaltyDetailPage(
-                      penalty: penalty,
-                      onBack: () => Navigator.of(context).pop(),
-                    ),
-              ),
-            );
+            onPenaltySelected(penalty);
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),

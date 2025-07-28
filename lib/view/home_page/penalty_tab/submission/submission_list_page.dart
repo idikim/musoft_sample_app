@@ -9,7 +9,9 @@ import 'package:madezone_study_student_app/provider/penalty_submission_provider.
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/item_submission_list.dart';
 
 class SubmissionListPage extends ConsumerWidget {
-  const SubmissionListPage({super.key});
+  final Function(Penalty) onPenaltySelected;
+
+  const SubmissionListPage({super.key, required this.onPenaltySelected});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -72,32 +74,33 @@ class SubmissionListPage extends ConsumerWidget {
               } else {
                 final reasonsWithDescriptions =
                     penaltyReasons.map((reason) {
-                      final correspondingPenalty = allPenalties.firstWhere(
+                  final correspondingPenalty = allPenalties.firstWhere(
                         (penalty) => penalty.id == reason.penaltyId,
-                        orElse:
-                            () => Penalty(
-                              id: reason.penaltyId,
-                              points: 0,
-                              category: reason.category,
-                              createdAt: DateTime.now(),
-                              description: reason.description,
-                            ),
-                      );
-                      return PenaltyReason(
-                        id: reason.id,
-                        category: reason.category,
-                        penaltyId: reason.penaltyId,
-                        startDate: reason.startDate,
-                        endDate: reason.endDate,
-                        description: correspondingPenalty.description ?? '',
-                        imageUrl: reason.imageUrl,
-                        userReason: reason.userReason,
-                      );
-                    }).toList();
+                    orElse:
+                        () => Penalty(
+                      id: reason.penaltyId,
+                      points: 0,
+                      category: reason.category,
+                      createdAt: DateTime.now(),
+                      description: reason.description,
+                    ),
+                  );
+                  return PenaltyReason(
+                    id: reason.id,
+                    category: reason.category,
+                    penaltyId: reason.penaltyId,
+                    startDate: reason.startDate,
+                    endDate: reason.endDate,
+                    description: correspondingPenalty.description ?? '',
+                    imageUrl: reason.imageUrl,
+                    userReason: reason.userReason,
+                  );
+                }).toList();
 
                 return Expanded(
                   child: ItemSubmissionList(
                     penaltyReasons: reasonsWithDescriptions,
+                    onPenaltySelected: onPenaltySelected,
                   ),
                 );
               }
