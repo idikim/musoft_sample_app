@@ -217,7 +217,15 @@ class MySchedulePage extends ConsumerWidget {
               ),
             ),
           if (selectedViewType != ViewType.monthly)
-            Expanded(child: ScheduleTable()),
+            Expanded(
+              child: ScheduleTable(
+                selectedDate: DateTime(
+                  selectedYear,
+                  selectedMonth,
+                  selectedDay!,
+                ),
+              ),
+            ),
         ],
       ),
     );

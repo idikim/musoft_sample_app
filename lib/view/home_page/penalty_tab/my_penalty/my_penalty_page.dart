@@ -15,6 +15,8 @@ class MyPenaltyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedYear = ref.watch(selectedYearProvider);
+    final selectedDay = ref.watch(selectedDayProvider);
     final selectedMonth = ref.watch(selectedMonthProvider);
     final allPenalties = ref.watch(penaltiesProvider);
 
@@ -126,8 +128,8 @@ class MyPenaltyPage extends ConsumerWidget {
                                     .read(studyTimeProvider.notifier)
                                     .addSampleStudyTimes();
                                 await ref
-                                    .read(scheduleSampleProvider.notifier)
-                                    .addSampleScheduleSamples();
+                                    .read(allDailySchedulesProvider.notifier)
+                                    .addAllSampleDailySchedules();
                               },
                               child: Text('샘플 데이터 추가'),
                             ),

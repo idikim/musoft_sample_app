@@ -1,31 +1,31 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:madezone_study_student_app/model/schedule_sample.dart';
+import 'package:madezone_study_student_app/model/daily_schedule.dart';
 
-class ScheduleSampleRepository {
+class DailyScheduleRepository {
   static const _key = 'schedule_samples';
 
-  static Future<void> saveScheduleSamples(List<ScheduleSample> samples) async {
+  static Future<void> saveDailySchedules(List<DailySchedule> samples) async {
     final prefs = await SharedPreferences.getInstance();
     final jsonList = samples.map((e) => jsonEncode(e.toJson())).toList();
     await prefs.setStringList(_key, jsonList);
   }
 
-  static Future<List<ScheduleSample>> loadScheduleSamples() async {
+  static Future<List<DailySchedule>> loadDailySchedules() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonList = prefs.getStringList(_key) ?? [];
-    return jsonList.map((e) => ScheduleSample.fromJson(jsonDecode(e))).toList();
+    return jsonList.map((e) => DailySchedule.fromJson(jsonDecode(e))).toList();
   }
 
-  static Future<void> addSampleScheduleSamples(
-    List<ScheduleSample> samples,
+  static Future<void> addSampleDailySchedules(
+    List<DailySchedule> samples,
   ) async {
-    final current = await loadScheduleSamples();
+    final current = await loadDailySchedules();
     final all = [...current, ...samples];
-    await saveScheduleSamples(all);
+    await saveDailySchedules(all);
   }
 
-  static Future<void> clearScheduleSamples() async {
+  static Future<void> clearDailySchedules() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
   }

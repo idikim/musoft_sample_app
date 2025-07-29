@@ -1,54 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:madezone_study_student_app/model/schedule_sample.dart';
+import 'package:madezone_study_student_app/model/daily_schedule.dart';
 
-final List<ScheduleSample> sampleScheduleSamples = [
-  ScheduleSample(
+final List<DailySchedule> sampleDailySchedules = [
+  // Sample data for July 29, 2025
+  DailySchedule(
+    date: DateTime(2025, 7, 29),
     startHour: 6,
     startMinute: 10,
     endHour: 6,
     endMinute: 20,
-    title: '지각 (10분)',
+    title: '지각',
     subtitle: '06:10',
     color: Colors.red.shade100,
   ),
-  ScheduleSample(
+  DailySchedule(
+    date: DateTime(2025, 7, 29),
     startHour: 6,
     startMinute: 0,
     endHour: 7,
     endMinute: 20,
-    title: '국어 (1시간 20분)',
+    title: '국어',
     subtitle: '06:00 - 07:20',
     details: ['3단원: 한국 문학의 흐름', '- 공부, 메모', '- 테스트'],
     color: Colors.green.shade100,
   ),
-  ScheduleSample(
+  DailySchedule(
+    date: DateTime(2025, 7, 29),
     startHour: 8,
     startMinute: 0,
     endHour: 9,
     endMinute: 20,
-    title: '수학 (1시간 20분)',
+    title: '수학',
     subtitle: '08:00 - 09:20',
     details: ['3단원: 한국 문학의 흐름', '- 공부, 메모', '- 테스트'],
     color: Colors.green.shade100,
   ),
-  ScheduleSample(
+  DailySchedule(
+    date: DateTime(2025, 7, 29),
     startHour: 10,
     startMinute: 0,
     endHour: 11,
     endMinute: 20,
-    title: '영어 (1시간 20분)',
+    title: '영어',
     subtitle: '10:00 - 11:20',
     details: ['3단원: 한국 문학의 흐름', '- 공부, 메모', '- 테스트'],
     color: Colors.green.shade100,
   ),
-  ScheduleSample(
+  DailySchedule(
+    date: DateTime(2025, 7, 29),
     startHour: 12,
     startMinute: 0,
     endHour: 15,
     endMinute: 20,
-    title: '외출 (3시간 20분)',
+    title: '외출',
     subtitle: '12:00 - 15:20',
     details: ['사유: 은행 방문, 문제집 구매 목적 서점 방문, 대중교통 이용시간까지 계산'],
     color: Colors.red.shade100,
+  ),
+
+  // Sample data for July 30, 2025
+  DailySchedule(
+    date: DateTime(2025, 7, 30),
+    startHour: 9,
+    startMinute: 0,
+    endHour: 10,
+    endMinute: 0,
+    title: '과학',
+    subtitle: '09:00 - 10:00',
+    details: ['물리: 뉴턴의 운동 법칙'],
+    color: Colors.blue.shade100,
+  ),
+  DailySchedule(
+    date: DateTime(2025, 7, 30),
+    startHour: 10,
+    startMinute: 30,
+    endHour: 11,
+    endMinute: 30,
+    title: '사회',
+    subtitle: '10:30 - 11:30',
+    details: ['한국사: 조선시대'],
+    color: Colors.orange.shade100,
+  ),
+
+  // Sample data for August 1, 2025
+  DailySchedule(
+    date: DateTime(2025, 8, 1),
+    startHour: 7,
+    startMinute: 0,
+    endHour: 8,
+    endMinute: 0,
+    title: '미술',
+    subtitle: '07:00 - 08:00',
+    details: ['드로잉 연습'],
+    color: Colors.purple.shade100,
   ),
 ];

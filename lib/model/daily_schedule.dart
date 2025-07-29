@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ScheduleSample {
+class DailySchedule {
+  final DateTime date;
   final int startHour;
   final int startMinute;
   final int endHour;
@@ -10,7 +11,8 @@ class ScheduleSample {
   final List<String>? details;
   final Color color;
 
-  ScheduleSample({
+  DailySchedule({
+    required this.date,
     required this.startHour,
     required this.startMinute,
     required this.endHour,
@@ -21,8 +23,9 @@ class ScheduleSample {
     required this.color,
   });
 
-  factory ScheduleSample.fromJson(Map<String, dynamic> json) {
-    return ScheduleSample(
+  factory DailySchedule.fromJson(Map<String, dynamic> json) {
+    return DailySchedule(
+      date: DateTime.parse(json['date'] as String),
       startHour: json['startHour'] as int,
       startMinute: json['startMinute'] as int,
       endHour: json['endHour'] as int,
@@ -35,6 +38,7 @@ class ScheduleSample {
   }
 
   Map<String, dynamic> toJson() => {
+    'date': date.toIso8601String(),
     'startHour': startHour,
     'startMinute': startMinute,
     'endHour': endHour,

@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:madezone_study_student_app/model/schedule_sample.dart';
+import 'package:madezone_study_student_app/model/daily_schedule.dart';
 import 'package:madezone_study_student_app/provider/schedule_sample_provider.dart';
 
 class ScheduleTable extends ConsumerWidget {
-  const ScheduleTable({super.key});
+  final DateTime selectedDate;
+  const ScheduleTable({super.key, required this.selectedDate});
 
-  List<ScheduleSample> _schedulesForHour(
-    List<ScheduleSample> samples,
-    int hour,
-  ) {
+  List<DailySchedule> _schedulesForHour(List<DailySchedule> samples, int hour, DateTime date) {
     return samples.where((s) {
       final start = s.startHour * 60 + s.startMinute;
       final end = s.endHour * 60 + s.endMinute;
       final hStart = hour * 60;
       final hEnd = (hour + 1) * 60;
-      return start < hEnd && end > hStart;
+      return s.date.year == date.year &&
+             s.date.month == date.month &&
+             s.date.day == date.day &&
+             start < hEnd && end > hStart;
     }).toList();
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final samples = ref.watch(scheduleSampleProvider);
+    final samples = ref.watch(dailyScheduleForDateProvider(selectedDate));
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -59,7 +60,7 @@ class ScheduleTable extends ConsumerWidget {
                   for (int hour = 6; hour <= 23; hour++)
                     _HourRow(
                       hour: hour,
-                      schedules: _schedulesForHour(samples, hour),
+                      schedules: _schedulesForHour(samples, hour, selectedDate),
                     ),
                 ],
               ),
@@ -73,7 +74,7 @@ class ScheduleTable extends ConsumerWidget {
 
 class _HourRow extends StatelessWidget {
   final int hour;
-  final List<ScheduleSample> schedules;
+  final List<DailySchedule> schedules;
   const _HourRow({required this.hour, required this.schedules});
 
   @override
