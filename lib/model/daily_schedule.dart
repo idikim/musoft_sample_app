@@ -7,7 +7,6 @@ class DailySchedule {
   final int endHour;
   final int endMinute;
   final String title;
-  final String? subtitle;
   final List<String>? details;
   final Color color;
 
@@ -18,7 +17,6 @@ class DailySchedule {
     required this.endHour,
     required this.endMinute,
     required this.title,
-    this.subtitle,
     this.details,
     required this.color,
   });
@@ -31,7 +29,6 @@ class DailySchedule {
       endHour: json['endHour'] as int,
       endMinute: json['endMinute'] as int,
       title: json['title'] as String,
-      subtitle: json['subtitle'] as String?,
       details: (json['details'] as List?)?.map((e) => e as String).toList(),
       color: Color(json['color'] as int),
     );
@@ -44,7 +41,6 @@ class DailySchedule {
     'endHour': endHour,
     'endMinute': endMinute,
     'title': title,
-    'subtitle': subtitle,
     'details': details,
     'color': color.value,
   };

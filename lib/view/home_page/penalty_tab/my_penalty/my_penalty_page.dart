@@ -6,8 +6,6 @@ import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/calendar/my_penalty_calendar_page.dart';
 import 'package:madezone_study_student_app/provider/penalty_provider.dart';
-import 'package:madezone_study_student_app/provider/study_time_provider.dart';
-import 'package:madezone_study_student_app/provider/schedule_sample_provider.dart';
 
 class MyPenaltyPage extends ConsumerWidget {
   final ValueChanged<Penalty> onPenaltySelected;
@@ -15,8 +13,6 @@ class MyPenaltyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedYear = ref.watch(selectedYearProvider);
-    final selectedDay = ref.watch(selectedDayProvider);
     final selectedMonth = ref.watch(selectedMonthProvider);
     final allPenalties = ref.watch(penaltiesProvider);
 
@@ -124,12 +120,6 @@ class MyPenaltyPage extends ConsumerWidget {
                                 await ref
                                     .read(penaltiesProvider.notifier)
                                     .addSamplePenalties();
-                                await ref
-                                    .read(studyTimeProvider.notifier)
-                                    .addSampleStudyTimes();
-                                await ref
-                                    .read(allDailySchedulesProvider.notifier)
-                                    .addAllSampleDailySchedules();
                               },
                               child: Text('샘플 데이터 추가'),
                             ),

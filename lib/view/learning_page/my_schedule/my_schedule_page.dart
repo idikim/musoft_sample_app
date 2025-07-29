@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:madezone_study_student_app/provider/common_providers.dart';
 import 'package:madezone_study_student_app/provider/study_time_provider.dart';
 import 'package:madezone_study_student_app/model/study_time.dart';
+import 'package:madezone_study_student_app/view/learning_page/my_schedule/widgets/add_schedule_dialog.dart';
 import 'widgets/date_picker_bottom_sheet.dart';
 import 'widgets/schedule_table.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +23,17 @@ class MySchedulePage extends ConsumerWidget {
     final studyTimes = ref.watch(studyTimeProvider);
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showAddScheduleDialog(
+            context,
+            ref.read(selectedYearProvider),
+            ref.read(selectedMonthProvider),
+            ref.read(selectedDayProvider)!,
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
           Padding(
@@ -278,6 +290,20 @@ class MySchedulePage extends ConsumerWidget {
       builder: (context) => const DatePickerBottomSheet(),
     );
   }
+
+  void _showAddScheduleDialog(
+    BuildContext context,
+    int year,
+    int month,
+    int day,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddScheduleDialog(selectedDate: DateTime(year, month, day));
+      },
+    );
+  }
 }
 
 enum ViewType { daily, weekly, monthly }
@@ -338,58 +364,6 @@ class DailyStudySummaryCard extends StatelessWidget {
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: textSize ?? 10,
-            ),
-            overflow: TextOverflow.clip,
-            softWrap: false,
-            maxLines: 1,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class WeeklyStudySummaryCard extends StatelessWidget {
-  final String label;
-  final String timeText;
-  const WeeklyStudySummaryCard({
-    super.key,
-    required this.label,
-    required this.timeText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: Colors.green.shade100),
-      padding: const EdgeInsets.all(2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.access_time_rounded,
-                color: Colors.black54,
-                size: 12,
-              ),
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(fontSize: 12),
-                  overflow: TextOverflow.clip,
-                  softWrap: false,
-                  maxLines: 1,
-                ),
-              ),
-            ],
-          ),
-          Text(
-            timeText,
-            style: const TextStyle(
-              color: Colors.green,
-              fontWeight: FontWeight.bold,
-              fontSize: 10,
             ),
             overflow: TextOverflow.clip,
             softWrap: false,

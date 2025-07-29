@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/daily_schedule.dart';
-import 'package:madezone_study_student_app/provider/schedule_sample_provider.dart';
+import 'package:madezone_study_student_app/provider/daily_schedule_provider.dart';
 
 class ScheduleTable extends ConsumerWidget {
   final DateTime selectedDate;
   const ScheduleTable({super.key, required this.selectedDate});
 
-  List<DailySchedule> _schedulesForHour(List<DailySchedule> samples, int hour, DateTime date) {
+  List<DailySchedule> _schedulesForHour(
+    List<DailySchedule> samples,
+    int hour,
+    DateTime date,
+  ) {
     return samples.where((s) {
       final start = s.startHour * 60 + s.startMinute;
       final end = s.endHour * 60 + s.endMinute;
       final hStart = hour * 60;
       final hEnd = (hour + 1) * 60;
       return s.date.year == date.year &&
-             s.date.month == date.month &&
-             s.date.day == date.day &&
-             start < hEnd && end > hStart;
+          s.date.month == date.month &&
+          s.date.day == date.day &&
+          start < hEnd &&
+          end > hStart;
     }).toList();
   }
 
@@ -134,14 +139,6 @@ class _HourRow extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 10),
-                              if (schedule.subtitle != null)
-                                Text(
-                                  schedule.subtitle!,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.black54,
-                                  ),
-                                ),
                             ],
                           ),
                           if (schedule.details != null)
