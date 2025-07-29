@@ -33,6 +33,26 @@ final dailyScheduleForDateProvider = StateNotifierProvider.family<
   DateTime
 >((ref, date) => DailyScheduleNotifier(ref, date));
 
+final totalStudyMinutesForDateProvider = Provider.family<int, DateTime>(
+  (ref, date) {
+    final allSchedules = ref.watch(allDailySchedulesProvider);
+    final dailySchedules = allSchedules.where((s) =>
+        s.date.year == date.year &&
+        s.date.month == date.month &&
+        s.date.day == date.day);
+
+    int totalMinutes = 0;
+    for (var schedule in dailySchedules) {
+      if (schedule.category == ScheduleCategory.study) {
+        final startTotalMinutes = schedule.startHour * 60 + schedule.startMinute;
+        final endTotalMinutes = schedule.endHour * 60 + schedule.endMinute;
+        totalMinutes += (endTotalMinutes - startTotalMinutes);
+      }
+    }
+    return totalMinutes;
+  },
+);
+
 class DailyScheduleNotifier extends StateNotifier<List<DailySchedule>> {
   final DateTime selectedDate;
   final Ref _ref;

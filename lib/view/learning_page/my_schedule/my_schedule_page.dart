@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:madezone_study_student_app/provider/common_providers.dart';
-import 'package:madezone_study_student_app/provider/study_time_provider.dart';
-import 'package:madezone_study_student_app/model/study_time.dart';
+import 'package:madezone_study_student_app/provider/daily_schedule_provider.dart';
+
 import 'package:madezone_study_student_app/view/learning_page/my_schedule/widgets/add_schedule_dialog.dart';
 import 'widgets/date_picker_bottom_sheet.dart';
 import 'widgets/schedule_table.dart';
@@ -20,7 +20,6 @@ class MySchedulePage extends ConsumerWidget {
     final isScheduleChecked = ref.watch(_scheduleCheckProvider);
     final selectedViewType = ref.watch(_selectedViewTypeProvider);
     final selectedYear = ref.watch(selectedYearProvider);
-    final studyTimes = ref.watch(studyTimeProvider);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -119,10 +118,10 @@ class MySchedulePage extends ConsumerWidget {
           if (selectedViewType == ViewType.weekly)
             (selectedDay != null)
                 ? _buildWeeklyCalendar(
+                  ref,
                   selectedYear,
                   selectedMonth,
                   selectedDay,
-                  studyTimes,
                 )
                 : SizedBox.shrink()
           else if (selectedViewType == ViewType.monthly)
@@ -156,8 +155,8 @@ class MySchedulePage extends ConsumerWidget {
                           ),
                           const SizedBox(height: 4),
                           _buildSummaryCardForDate(
+                            ref,
                             date,
-                            studyTimes,
                             viewType: ViewType.monthly,
                           ),
                         ],
@@ -193,23 +192,15 @@ class MySchedulePage extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  studyTimes
-                              .firstWhere(
-                                (s) =>
-                                    s.date.year == selectedYear &&
-                                    s.date.month == selectedMonth &&
-                                    s.date.day == selectedDay,
-                                orElse:
-                                    () => StudyTime(
-                                      date: DateTime(
-                                        selectedYear,
-                                        selectedMonth,
-                                        selectedDay,
-                                      ),
-                                      minutes: 0,
-                                    ),
-                              )
-                              .minutes >
+                  ref.watch(
+                            totalStudyMinutesForDateProvider(
+                              DateTime(
+                                selectedYear,
+                                selectedMonth,
+                                selectedDay!,
+                              ),
+                            ),
+                          ) >
                           0
                       ? Expanded(
                         child: Container(
@@ -222,8 +213,8 @@ class MySchedulePage extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: _buildSummaryCardForDate(
+                            ref,
                             DateTime(selectedYear, selectedMonth, selectedDay),
-                            studyTimes,
                             viewType: selectedViewType,
                           ),
                         ),
@@ -380,23 +371,17 @@ class DailyStudySummaryCard extends StatelessWidget {
 }
 
 Widget _buildSummaryCardForDate(
-  DateTime date,
-  List<StudyTime> studyTimes, {
+  WidgetRef ref,
+  DateTime date, {
   ViewType? viewType,
 }) {
-  final study = studyTimes.firstWhere(
-    (s) =>
-        s.date.year == date.year &&
-        s.date.month == date.month &&
-        s.date.day == date.day,
-    orElse: () => StudyTime(date: date, minutes: 0),
-  );
+  final totalMinutes = ref.watch(totalStudyMinutesForDateProvider(date));
 
-  if (study.minutes <= 0) {
+  if (totalMinutes <= 0) {
     return const SizedBox.shrink();
   }
 
-  final timeText = _formatMinutes(study.minutes);
+  final timeText = _formatMinutes(totalMinutes);
   return DailyStudySummaryCard(
     label: '순공시간',
     timeText: timeText,
@@ -416,10 +401,10 @@ String _formatMinutes(int minutes) {
 }
 
 Widget _buildWeeklyCalendar(
+  WidgetRef ref,
   int selectedYear,
   int selectedMonth,
   int selectedDay,
-  List<StudyTime> studyTimes,
 ) {
   final now = DateTime(selectedYear, selectedMonth, selectedDay);
   final weekStart = now.subtract(Duration(days: now.weekday % 7));
@@ -486,8 +471,8 @@ Widget _buildWeeklyCalendar(
                         ),
                         const SizedBox(height: 4),
                         _buildSummaryCardForDate(
+                          ref,
                           weekDates[i],
-                          studyTimes,
                           viewType: ViewType.weekly,
                         ),
                       ],
