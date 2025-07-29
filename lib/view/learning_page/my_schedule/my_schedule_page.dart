@@ -24,6 +24,10 @@ class MySchedulePage extends ConsumerWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        elevation: 0,
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        shape: CircleBorder(),
         onPressed: () {
           _showAddScheduleDialog(
             context,
@@ -32,7 +36,7 @@ class MySchedulePage extends ConsumerWidget {
             ref.read(selectedDayProvider)!,
           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, size: 40),
       ),
       body: Column(
         children: [

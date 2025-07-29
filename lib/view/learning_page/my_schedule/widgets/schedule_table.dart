@@ -8,11 +8,11 @@ class ScheduleTable extends ConsumerWidget {
   const ScheduleTable({super.key, required this.selectedDate});
 
   List<DailySchedule> _schedulesForHour(
-    List<DailySchedule> samples,
+    List<DailySchedule> schedules,
     int hour,
     DateTime date,
   ) {
-    return samples.where((s) {
+    return schedules.where((s) {
       final start = s.startHour * 60 + s.startMinute;
       final end = s.endHour * 60 + s.endMinute;
       final hStart = hour * 60;
@@ -27,7 +27,7 @@ class ScheduleTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final samples = ref.watch(dailyScheduleForDateProvider(selectedDate));
+    final schedules = ref.watch(dailyScheduleForDateProvider(selectedDate));
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -65,7 +65,11 @@ class ScheduleTable extends ConsumerWidget {
                   for (int hour = 6; hour <= 23; hour++)
                     _HourRow(
                       hour: hour,
-                      schedules: _schedulesForHour(samples, hour, selectedDate),
+                      schedules: _schedulesForHour(
+                        schedules,
+                        hour,
+                        selectedDate,
+                      ),
                     ),
                 ],
               ),
@@ -125,6 +129,35 @@ class _HourRow extends StatelessWidget {
                         children: [
                           Row(
                             children: [
+                              Text(
+                                schedule.title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: schedule.category == ScheduleCategory.study
+                                      ? Colors.green
+                                      : schedule.category == ScheduleCategory.penalty
+                                          ? Colors.red
+                                          : Colors.black,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '(${_formatDuration(schedule.startHour, schedule.startMinute, schedule.endHour, schedule.endMinute)})',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: schedule.category == ScheduleCategory.study
+                                      ? Colors.green
+                                      : schedule.category == ScheduleCategory.penalty
+                                          ? Colors.red
+                                          : Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
                               Icon(
                                 Icons.schedule,
                                 size: 18,
@@ -132,22 +165,18 @@ class _HourRow extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                schedule.title,
+                                '${schedule.startHour.toString().padLeft(2, '0')}:${schedule.startMinute.toString().padLeft(2, '0')} - ${schedule.endHour.toString().padLeft(2, '0')}:${schedule.endMinute.toString().padLeft(2, '0')}',
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
+                                  fontSize: 13,
+                                  color: Colors.black87,
                                 ),
                               ),
-                              const SizedBox(width: 10),
                             ],
                           ),
                           if (schedule.details != null)
                             ...schedule.details!.map(
                               (d) => Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 24,
-                                  top: 2,
-                                ),
+                                padding: const EdgeInsets.only(top: 2),
                                 child: Text(
                                   d,
                                   style: const TextStyle(
@@ -167,5 +196,29 @@ class _HourRow extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+String _formatDuration(
+  int startHour,
+  int startMinute,
+  int endHour,
+  int endMinute,
+) {
+  final startTotalMinutes = startHour * 60 + startMinute;
+  final endTotalMinutes = endHour * 60 + endMinute;
+  final durationMinutes = endTotalMinutes - startTotalMinutes;
+
+  if (durationMinutes < 0) return "";
+
+  final hours = durationMinutes ~/ 60;
+  final minutes = durationMinutes % 60;
+
+  if (hours > 0 && minutes > 0) {
+    return "$hours시간 $minutes분";
+  } else if (hours > 0) {
+    return "$hours시간";
+  } else {
+    return "$minutes분";
   }
 }

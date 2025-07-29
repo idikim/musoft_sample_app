@@ -5,8 +5,6 @@ import 'package:madezone_study_student_app/model/daily_schedule.dart';
 import 'package:madezone_study_student_app/provider/daily_schedule_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-enum ScheduleCategory { study, penalty }
-
 class AddScheduleDialog extends ConsumerStatefulWidget {
   final DateTime selectedDate;
 
@@ -30,15 +28,15 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
       widget.selectedDate.year,
       widget.selectedDate.month,
       widget.selectedDate.day,
-      _startTime.hour,
-      _startTime.minute,
+      6,
+      0,
     );
     _endTime = DateTime(
       widget.selectedDate.year,
       widget.selectedDate.month,
       widget.selectedDate.day,
-      _endTime.hour,
-      _endTime.minute,
+      7,
+      0,
     );
   }
 
@@ -179,7 +177,13 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
       effectiveMinimumDate = minTimeLimit;
     }
 
-    DateTime initialPickerTime = currentTime;
+    DateTime initialPickerTime = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      6,
+      0,
+    );
     if (initialPickerTime.isBefore(effectiveMinimumDate)) {
       initialPickerTime = effectiveMinimumDate;
     }
@@ -241,6 +245,7 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
           _selectedCategory == ScheduleCategory.study
               ? Colors.green.shade100
               : Colors.red.shade100,
+      category: _selectedCategory!,
     );
 
     ref.read(allDailySchedulesProvider.notifier).addSchedule(newSchedule);
