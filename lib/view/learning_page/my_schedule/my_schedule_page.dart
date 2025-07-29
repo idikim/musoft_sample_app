@@ -122,6 +122,7 @@ class MySchedulePage extends ConsumerWidget {
                   selectedYear,
                   selectedMonth,
                   selectedDay,
+                  isScheduleChecked,
                 )
                 : SizedBox.shrink()
           else if (selectedViewType == ViewType.monthly)
@@ -159,6 +160,22 @@ class MySchedulePage extends ConsumerWidget {
                             date,
                             viewType: ViewType.monthly,
                           ),
+                          Spacer(),
+                          if (isScheduleChecked &&
+                              date.weekday == DateTime.friday)
+                            Container(
+                              width: double.infinity,
+                              color: Colors.black,
+                              padding: const EdgeInsets.all(2),
+                              child: const Text(
+                                '모의고사',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -197,7 +214,7 @@ class MySchedulePage extends ConsumerWidget {
                               DateTime(
                                 selectedYear,
                                 selectedMonth,
-                                selectedDay!,
+                                selectedDay,
                               ),
                             ),
                           ) >
@@ -405,6 +422,7 @@ Widget _buildWeeklyCalendar(
   int selectedYear,
   int selectedMonth,
   int selectedDay,
+  bool isScheduleChecked,
 ) {
   final now = DateTime(selectedYear, selectedMonth, selectedDay);
   final weekStart = now.subtract(Duration(days: now.weekday % 7));
@@ -441,8 +459,7 @@ Widget _buildWeeklyCalendar(
               for (int i = 0; i < weekDates.length; i++)
                 Expanded(
                   child: Container(
-                    alignment: Alignment.topLeft,
-                    height: 65,
+                    height: isScheduleChecked ? 85 : 65,
                     margin: EdgeInsets.only(right: i == 6 ? 0 : 1),
                     decoration: BoxDecoration(
                       border:
@@ -455,6 +472,7 @@ Widget _buildWeeklyCalendar(
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
@@ -475,6 +493,22 @@ Widget _buildWeeklyCalendar(
                           weekDates[i],
                           viewType: ViewType.weekly,
                         ),
+                        Spacer(),
+                        if (isScheduleChecked &&
+                            weekDates[i].weekday == DateTime.friday)
+                          Container(
+                            width: double.infinity,
+                            color: Colors.black,
+                            padding: const EdgeInsets.all(2),
+                            child: const Text(
+                              '모의고사',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                       ],
                     ),
                   ),
