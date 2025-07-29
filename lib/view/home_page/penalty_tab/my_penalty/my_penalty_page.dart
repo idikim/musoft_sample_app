@@ -6,6 +6,8 @@ import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty
 import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/calendar/my_penalty_calendar_page.dart';
 import 'package:madezone_study_student_app/provider/penalty_provider.dart';
+import 'package:madezone_study_student_app/provider/study_time_provider.dart';
+import 'package:madezone_study_student_app/provider/schedule_sample_provider.dart';
 
 class MyPenaltyPage extends ConsumerWidget {
   final ValueChanged<Penalty> onPenaltySelected;
@@ -116,11 +118,17 @@ class MyPenaltyPage extends ConsumerWidget {
                             ),
                             SizedBox(height: 20),
                             ElevatedButton(
-                              onPressed:
-                                  () =>
-                                      ref
-                                          .read(penaltiesProvider.notifier)
-                                          .addSamplePenalties(),
+                              onPressed: () async {
+                                await ref
+                                    .read(penaltiesProvider.notifier)
+                                    .addSamplePenalties();
+                                await ref
+                                    .read(studyTimeProvider.notifier)
+                                    .addSampleStudyTimes();
+                                await ref
+                                    .read(scheduleSampleProvider.notifier)
+                                    .addSampleScheduleSamples();
+                              },
                               child: Text('샘플 데이터 추가'),
                             ),
                           ],
@@ -193,6 +201,7 @@ class MyPenaltyPage extends ConsumerWidget {
                       selectedMonth == 0 ? DateTime.now().month : selectedMonth,
                       1,
                     ),
+                    dayCellBuilder: null,
                   ),
         ),
       ],

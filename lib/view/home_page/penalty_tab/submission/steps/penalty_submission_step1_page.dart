@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
+import 'package:madezone_study_student_app/provider/common_providers.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/steps/widgets/common_widgets.dart';
 
 class PenaltySubmissionStep1Page extends ConsumerWidget {

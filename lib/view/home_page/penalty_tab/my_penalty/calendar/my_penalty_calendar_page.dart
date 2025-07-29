@@ -8,7 +8,12 @@ import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty
 
 class MyPenaltyCalendarPage extends ConsumerStatefulWidget {
   final DateTime initialMonth;
-  const MyPenaltyCalendarPage({super.key, required this.initialMonth});
+  final Widget Function(DateTime day)? dayCellBuilder;
+  const MyPenaltyCalendarPage({
+    super.key,
+    required this.initialMonth,
+    this.dayCellBuilder,
+  });
 
   @override
   ConsumerState<MyPenaltyCalendarPage> createState() =>
@@ -91,7 +96,7 @@ class _MyPenaltyCalendarPageState extends ConsumerState<MyPenaltyCalendarPage> {
     return Container(
       decoration: BoxDecoration(color: Colors.grey.shade200),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Row(
           children: daysOfWeek.map((day) => DayOfWeekCell(day: day)).toList(),
         ),
@@ -124,21 +129,25 @@ class _MyPenaltyCalendarPageState extends ConsumerState<MyPenaltyCalendarPage> {
       final bool isCurrentMonth = day.month == _focusedDay.month;
       final List<Penalty> penalties = _penaltyData[_normalizeDate(day)] ?? [];
 
-      dayCells.add(
-        CalendarDayCell(
-          day: day,
-          isCurrentMonth: isCurrentMonth,
-          penalties: penalties,
-          onPenaltyTap: (penalty) {
-            Get.to(
-              () => PenaltyDetailPage(penalty: penalty),
-              transition: Transition.rightToLeft,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.ease,
-            );
-          },
-        ),
-      );
+      if (widget.dayCellBuilder != null) {
+        dayCells.add(widget.dayCellBuilder!(day));
+      } else {
+        dayCells.add(
+          CalendarDayCell(
+            day: day,
+            isCurrentMonth: isCurrentMonth,
+            penalties: penalties,
+            onPenaltyTap: (penalty) {
+              Get.to(
+                () => PenaltyDetailPage(penalty: penalty),
+                transition: Transition.rightToLeft,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.ease,
+              );
+            },
+          ),
+        );
+      }
     }
 
     final int numberOfRows = numberOfWeeks;

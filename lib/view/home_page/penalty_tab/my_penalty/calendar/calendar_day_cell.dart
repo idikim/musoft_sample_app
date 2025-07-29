@@ -29,7 +29,7 @@ class CalendarDayCell extends StatelessWidget {
             child: Text(
               '${day.day}',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color:
                     isCurrentMonth
                         ? (day.weekday == DateTime.sunday
@@ -71,9 +71,9 @@ class DayOfWeekCell extends StatelessWidget {
     return Expanded(
       child: Center(
         child: Text(
-          ' $day 요일',
+          ' $day요일',
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 12,
             color: day == '일' ? Colors.red : Colors.black,
           ),
         ),

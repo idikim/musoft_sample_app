@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/provider/penalty_provider.dart';
+import 'package:madezone_study_student_app/provider/common_providers.dart';
 import 'package:madezone_study_student_app/repository/penalty_reason_repository.dart';
 
 /// 결석 여부 선택 상태
@@ -9,19 +10,6 @@ final isAbsenceSelectedProvider = StateProvider<bool>((ref) => false);
 
 /// 선택된 벌점 사유 카테고리
 final selectedReasonProvider = StateProvider<PenaltyCategory?>((ref) => null);
-
-/// 선택된 날짜
-final selectedDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
-
-/// 선택된 시작 시간
-final selectedStartTimeProvider = StateProvider<DateTime>(
-  (ref) => _getDefaultTime(),
-);
-
-/// 선택된 종료 시간
-final selectedEndTimeProvider = StateProvider<DateTime>(
-  (ref) => _getDefaultTime(),
-);
 
 /// 직접 입력한 사유
 final reasonInputProvider = StateProvider<String>((ref) => '');
@@ -116,12 +104,6 @@ class SubmissionPageStateNotifier extends StateNotifier<SubmissionPageState> {
   }
 }
 
-/// 기본 시간 반환 헬퍼 함수
-DateTime _getDefaultTime() {
-  final now = DateTime.now();
-  return DateTime(now.year, now.month, now.day, 0, 0);
-}
-
 /// 벌점 사유 제출 및 입력값 초기화 등 로직 담당 클래스
 class PenaltySubmissionLogic {
   final Ref ref;
@@ -136,6 +118,12 @@ class PenaltySubmissionLogic {
     ref.read(reasonInputProvider.notifier).state = '';
     ref.read(selectedImagePathsProvider.notifier).state = [];
     ref.read(isAbsenceSelectedProvider.notifier).state = false;
+  }
+
+  /// 기본 시간 반환 헬퍼 함수
+  DateTime _getDefaultTime() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, 0, 0);
   }
 
   /// 기존 Penalty로 초기화
