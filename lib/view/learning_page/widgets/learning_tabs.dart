@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:madezone_study_student_app/view/learning_page/widgets/study_time_statistics_bottom_sheet.dart';
 
 class LearningTabs extends StatelessWidget {
   final List<String> tabs;
@@ -62,24 +63,37 @@ class LearningTabs extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 1),
-            ),
-            child: Row(
-              spacing: 8,
-              children: [
-                Container(
-                  decoration: BoxDecoration(border: Border.all()),
-                  child: Icon(Icons.bar_chart_rounded),
+          GestureDetector(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
-                const Text(
-                  '과목별 통계',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
+                builder: (BuildContext context) {
+                  return const StudyTimeStatisticsBottomSheet();
+                },
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 1),
+              ),
+              child: Row(
+                spacing: 8,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(border: Border.all()),
+                    child: Icon(Icons.bar_chart_rounded),
+                  ),
+                  const Text(
+                    '과목별 통계',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
