@@ -25,11 +25,11 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   int _mealTabIndex = 0;
-  Notice? _selectedNotice;
+  NoticePost? _selectedNotice;
   bool _isNoticeDetailShown = false;
   bool _isNoticeDetailFullyVisible = false;
 
-  void _onNoticeSelected(Notice notice) {
+  void _onNoticeSelected(NoticePost notice) {
     setState(() {
       _selectedNotice = notice;
       _isNoticeDetailShown = true;

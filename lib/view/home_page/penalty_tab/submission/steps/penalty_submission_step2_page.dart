@@ -53,6 +53,7 @@ class _PenaltySubmissionStep2PageState
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 12),
         Text(
           '파일 제출하기',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

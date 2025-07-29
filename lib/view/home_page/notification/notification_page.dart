@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:madezone_study_student_app/model/notification.dart';
+import 'package:madezone_study_student_app/model/notice.dart';
 import 'package:intl/intl.dart';
 
 class NotificationPage extends StatelessWidget {

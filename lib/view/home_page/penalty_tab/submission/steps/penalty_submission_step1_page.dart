@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:madezone_study_student_app/model/penalty_category.dart';
+import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/provider/penalty_submission_provider.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/steps/widgets/common_widgets.dart';
 
 class PenaltySubmissionStep1Page extends ConsumerWidget {
   final Penalty? penalty;
@@ -16,6 +15,7 @@ class PenaltySubmissionStep1Page extends ConsumerWidget {
       spacing: 24,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(),
         _ReasonSelection(penalty: penalty),
         _DateSelection(penalty: penalty),
         const _TimeSelection(),
@@ -39,10 +39,9 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
     super.initState();
     Future.microtask(() {
       if (widget.penalty != null) {
-        final initialCategory = widget.penalty!.category;
-        ref.read(selectedReasonProvider.notifier).state = initialCategory;
-        ref.read(isAbsenceSelectedProvider.notifier).state =
-            initialCategory == PenaltyCategory.absence;
+        ref
+            .read(penaltySubmissionLogicProvider)
+            .initializeWithPenalty(widget.penalty!);
       } else {
         ref.read(isAbsenceSelectedProvider.notifier).state = false;
       }
@@ -51,94 +50,61 @@ class _ReasonSelectionState extends ConsumerState<_ReasonSelection> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedReason = ref.watch(selectedReasonProvider);
     final bool isPenaltyProvided = widget.penalty != null;
 
     return Column(
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '사유 선택',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Row(
-          spacing: 4,
-          children: [
-            _ReasonChip(
-              text: '결석',
-              isSelected: selectedReason == PenaltyCategory.absence,
-              onTap:
-                  isPenaltyProvided
-                      ? null
-                      : () {
-                        ref.read(selectedReasonProvider.notifier).state =
-                            PenaltyCategory.absence;
-                        ref.read(isAbsenceSelectedProvider.notifier).state =
-                            true;
-                        final now = DateTime.now();
-                        ref.read(selectedStartTimeProvider.notifier).state =
-                            DateTime(now.year, now.month, now.day, 0, 0);
-                        ref.read(selectedEndTimeProvider.notifier).state =
-                            DateTime(now.year, now.month, now.day, 0, 0);
-                      },
-            ),
-            _ReasonChip(
-              text: '지각',
-              isSelected: selectedReason == PenaltyCategory.tardy,
-              onTap:
-                  isPenaltyProvided
-                      ? null
-                      : () {
-                        ref.read(selectedReasonProvider.notifier).state =
-                            PenaltyCategory.tardy;
-                        ref.read(isAbsenceSelectedProvider.notifier).state =
-                            false;
-                      },
-            ),
-            _ReasonChip(
-              text: '외출',
-              isSelected: selectedReason == PenaltyCategory.outing,
-              onTap:
-                  isPenaltyProvided
-                      ? null
-                      : () {
-                        ref.read(selectedReasonProvider.notifier).state =
-                            PenaltyCategory.outing;
-                        ref.read(isAbsenceSelectedProvider.notifier).state =
-                            false;
-                      },
-            ),
-            _ReasonChip(
-              text: '조퇴',
-              isSelected: selectedReason == PenaltyCategory.earlyLeave,
-              onTap:
-                  isPenaltyProvided
-                      ? null
-                      : () {
-                        ref.read(selectedReasonProvider.notifier).state =
-                            PenaltyCategory.earlyLeave;
-                        ref.read(isAbsenceSelectedProvider.notifier).state =
-                            false;
-                      },
-            ),
-            _ReasonChip(
-              text: '학습태도',
-              isSelected: selectedReason == PenaltyCategory.learningAttitude,
-              onTap:
-                  isPenaltyProvided
-                      ? null
-                      : () {
-                        ref.read(selectedReasonProvider.notifier).state =
-                            PenaltyCategory.learningAttitude;
-                        ref.read(isAbsenceSelectedProvider.notifier).state =
-                            false;
-                      },
-            ),
-          ],
-        ),
+        const SectionHeader(title: '사유 선택'),
+        Row(spacing: 4, children: _buildReasonChips(isPenaltyProvided)),
       ],
     );
+  }
+
+  List<Widget> _buildReasonChips(bool isPenaltyProvided) {
+    final reasons = [
+      {'text': '결석', 'category': PenaltyCategory.absence},
+      {'text': '지각', 'category': PenaltyCategory.tardy},
+      {'text': '외출', 'category': PenaltyCategory.outing},
+      {'text': '조퇴', 'category': PenaltyCategory.earlyLeave},
+      {'text': '학습태도', 'category': PenaltyCategory.learningAttitude},
+    ];
+
+    return reasons.map((reason) {
+      final category = reason['category'] as PenaltyCategory;
+      final isSelected = ref.watch(selectedReasonProvider) == category;
+
+      return _ReasonChip(
+        text: reason['text'] as String,
+        isSelected: isSelected,
+        onTap: isPenaltyProvided ? null : () => _onReasonSelected(category),
+      );
+    }).toList();
+  }
+
+  void _onReasonSelected(PenaltyCategory category) {
+    ref.read(selectedReasonProvider.notifier).state = category;
+    ref.read(isAbsenceSelectedProvider.notifier).state =
+        category == PenaltyCategory.absence;
+
+    if (category == PenaltyCategory.absence) {
+      final now = DateTime.now();
+      ref.read(selectedStartTimeProvider.notifier).state = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        0,
+        0,
+      );
+      ref.read(selectedEndTimeProvider.notifier).state = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        0,
+        0,
+      );
+    }
   }
 }
 
@@ -199,83 +165,42 @@ class _DateSelectionState extends ConsumerState<_DateSelection> {
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('날짜', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        GestureDetector(
+        const SectionHeader(title: '날짜'),
+        SelectableContainer(
+          isDisabled: isPenaltyProvided,
           onTap:
               isPenaltyProvided
                   ? null
-                  : () async {
-                    final DateTime? picked =
-                        await showCupertinoDialog<DateTime>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            DateTime tempPickedDate = selectedDate;
-                            return CupertinoTheme(
-                              data: const CupertinoThemeData(
-                                brightness: Brightness.light,
-                                textTheme: CupertinoTextThemeData(
-                                  dateTimePickerTextStyle: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                              child: CupertinoAlertDialog(
-                                content: SizedBox(
-                                  height: 200,
-                                  child: Localizations.override(
-                                    context: context,
-                                    locale: const Locale('ko', 'KR'),
-                                    child: CupertinoDatePicker(
-                                      initialDateTime: selectedDate,
-                                      mode: CupertinoDatePickerMode.date,
-                                      onDateTimeChanged: (DateTime newDate) {
-                                        tempPickedDate = newDate;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                actions: <CupertinoDialogAction>[
-                                  CupertinoDialogAction(
-                                    child: const Text('취소'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  CupertinoDialogAction(
-                                    child: const Text('선택'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(tempPickedDate);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                    if (picked != null && picked != selectedDate) {
-                      ref.read(selectedDateProvider.notifier).state = picked;
-                    }
-                  },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              border:
-                  isPenaltyProvided
-                      ? Border.all(color: Colors.grey[300]!)
-                      : Border.all(),
-              color: isPenaltyProvided ? Colors.grey[300] : null,
-            ),
-            child: Text(
-              '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')} ${DateFormat('EEEE', 'ko_KR').format(selectedDate)}',
-              style: TextStyle(
-                fontSize: 16,
-                color: isPenaltyProvided ? Colors.black45 : Colors.black,
-              ),
+                  : () => _showDatePicker(context, selectedDate),
+          child: Text(
+            TimeUtils.formatDate(selectedDate),
+            style: TextStyle(
+              fontSize: 16,
+              color: isPenaltyProvided ? Colors.black45 : Colors.black,
             ),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _showDatePicker(
+    BuildContext context,
+    DateTime selectedDate,
+  ) async {
+    final DateTime? picked = await showCupertinoDialog<DateTime>(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDatePickerDialog(
+          initialDate: selectedDate,
+          onDateSelected: (DateTime newDate) {},
+        );
+      },
+    );
+
+    if (picked != null && picked != selectedDate) {
+      ref.read(selectedDateProvider.notifier).state = picked;
+    }
   }
 }
 
@@ -309,13 +234,6 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
     });
   }
 
-  String _getDurationText(DateTime startTime, DateTime endTime) {
-    final Duration duration = endTime.difference(startTime);
-    final int hours = duration.inHours;
-    final int minutes = duration.inMinutes.remainder(60);
-    return '$hours시간 $minutes분';
-  }
-
   @override
   Widget build(BuildContext context) {
     final isAbsenceSelected = ref.watch(isAbsenceSelectedProvider);
@@ -326,158 +244,23 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('시간', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SectionHeader(title: '시간'),
         Row(
           spacing: 8,
           children: [
-            GestureDetector(
-              onTap:
-                  isAbsenceSelected
-                      ? null
-                      : () async {
-                        final DateTime? picked =
-                            await showCupertinoDialog<DateTime>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                DateTime tempPickedTime = selectedStartTime;
-                                return CupertinoTheme(
-                                  data: const CupertinoThemeData(
-                                    brightness: Brightness.light,
-                                  ),
-                                  child: CupertinoAlertDialog(
-                                    content: SizedBox(
-                                      height: 200,
-                                      child: CupertinoDatePicker(
-                                        initialDateTime: selectedStartTime,
-                                        mode: CupertinoDatePickerMode.time,
-                                        onDateTimeChanged: (DateTime newTime) {
-                                          tempPickedTime = newTime;
-                                        },
-                                      ),
-                                    ),
-                                    actions: <CupertinoDialogAction>[
-                                      CupertinoDialogAction(
-                                        child: const Text('취소'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      CupertinoDialogAction(
-                                        child: const Text('선택'),
-                                        onPressed: () {
-                                          Navigator.of(
-                                            context,
-                                          ).pop(tempPickedTime);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                        if (picked != null && picked != selectedStartTime) {
-                          ref.read(selectedStartTimeProvider.notifier).state =
-                              picked;
-                          if (selectedEndTime.isBefore(picked)) {
-                            ref
-                                .read(selectedEndTimeProvider.notifier)
-                                .state = picked.add(const Duration(hours: 1));
-                          }
-                        }
-                      },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: isAbsenceSelected ? Colors.grey[300] : null,
-                  border:
-                      isAbsenceSelected
-                          ? Border.all(color: Colors.grey[300]!)
-                          : Border.all(),
-                ),
-                child: Text(
-                  DateFormat('HH:mm').format(selectedStartTime),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: isAbsenceSelected ? Colors.black45 : Colors.black,
-                  ),
-                ),
-              ),
+            _buildTimeSelector(
+              selectedStartTime,
+              isAbsenceSelected,
+              (picked) => _onStartTimeChanged(picked, selectedEndTime),
             ),
-            Text('-'),
-            GestureDetector(
-              onTap:
-                  isAbsenceSelected
-                      ? null
-                      : () async {
-                        final DateTime? picked =
-                            await showCupertinoDialog<DateTime>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                DateTime tempPickedTime = selectedEndTime;
-                                return CupertinoTheme(
-                                  data: const CupertinoThemeData(
-                                    brightness: Brightness.light,
-                                  ),
-                                  child: CupertinoAlertDialog(
-                                    content: SizedBox(
-                                      height: 200,
-                                      child: CupertinoDatePicker(
-                                        initialDateTime: selectedEndTime,
-                                        mode: CupertinoDatePickerMode.time,
-                                        onDateTimeChanged: (DateTime newTime) {
-                                          tempPickedTime = newTime;
-                                        },
-                                      ),
-                                    ),
-                                    actions: <CupertinoDialogAction>[
-                                      CupertinoDialogAction(
-                                        child: const Text('취소'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      CupertinoDialogAction(
-                                        child: const Text('선택'),
-                                        onPressed: () {
-                                          Navigator.of(
-                                            context,
-                                          ).pop(tempPickedTime);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                        if (picked != null && picked != selectedEndTime) {
-                          ref.read(selectedEndTimeProvider.notifier).state =
-                              picked;
-                          if (picked.isBefore(selectedStartTime)) {
-                            ref.read(selectedStartTimeProvider.notifier).state =
-                                picked.subtract(const Duration(hours: 1));
-                          }
-                        }
-                      },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: isAbsenceSelected ? Colors.grey[300] : null,
-                  border:
-                      isAbsenceSelected
-                          ? Border.all(color: Colors.grey[300]!)
-                          : Border.all(),
-                ),
-                child: Text(
-                  DateFormat('HH:mm').format(selectedEndTime),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: isAbsenceSelected ? Colors.black45 : Colors.black,
-                  ),
-                ),
-              ),
+            const Text('-'),
+            _buildTimeSelector(
+              selectedEndTime,
+              isAbsenceSelected,
+              (picked) => _onEndTimeChanged(picked, selectedStartTime),
             ),
             Text(
-              _getDurationText(selectedStartTime, selectedEndTime),
+              TimeUtils.getDurationText(selectedStartTime, selectedEndTime),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: isAbsenceSelected ? Colors.black45 : Colors.black,
@@ -487,6 +270,65 @@ class _TimeSelectionState extends ConsumerState<_TimeSelection> {
         ),
       ],
     );
+  }
+
+  Widget _buildTimeSelector(
+    DateTime time,
+    bool isDisabled,
+    Function(DateTime) onTimeChanged,
+  ) {
+    return SelectableContainer(
+      isDisabled: isDisabled,
+      onTap:
+          isDisabled
+              ? null
+              : () => _showTimePicker(context, time, onTimeChanged),
+      child: Text(
+        TimeUtils.formatTime(time),
+        style: TextStyle(
+          fontSize: 16,
+          color: isDisabled ? Colors.black45 : Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showTimePicker(
+    BuildContext context,
+    DateTime time,
+    Function(DateTime) onTimeChanged,
+  ) async {
+    final DateTime? picked = await showCupertinoDialog<DateTime>(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomTimePickerDialog(
+          initialTime: time,
+          onTimeSelected: (DateTime newTime) {},
+        );
+      },
+    );
+
+    if (picked != null && picked != time) {
+      onTimeChanged(picked);
+    }
+  }
+
+  void _onStartTimeChanged(DateTime newStartTime, DateTime currentEndTime) {
+    ref.read(selectedStartTimeProvider.notifier).state = newStartTime;
+    if (currentEndTime.isBefore(newStartTime)) {
+      ref.read(selectedEndTimeProvider.notifier).state = newStartTime.add(
+        const Duration(hours: 1),
+      );
+    }
+  }
+
+  void _onEndTimeChanged(DateTime newEndTime, DateTime currentStartTime) {
+    ref.read(selectedEndTimeProvider.notifier).state = newEndTime;
+    if (newEndTime.isBefore(currentStartTime)) {
+      ref.read(selectedStartTimeProvider.notifier).state = newEndTime.subtract(
+        const Duration(hours: 1),
+      );
+    }
   }
 }
 
@@ -530,21 +372,12 @@ class _ReasonInputState extends ConsumerState<_ReasonInput> {
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          spacing: 8,
-          children: [
-            Text(
-              '벌점 사유',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text('(100자 이하)', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
+        const SectionHeader(title: '벌점 사유', subtitle: '(100자 이하)'),
         TextField(
           controller: _controller,
           maxLines: 3,
           maxLength: 100,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: OutlineInputBorder(),
             hintText: '사유를 자세하게 작성해주세요',
             counterText: '',
@@ -555,7 +388,7 @@ class _ReasonInputState extends ConsumerState<_ReasonInput> {
           children: [
             Text(
               '$_charCount/100',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),

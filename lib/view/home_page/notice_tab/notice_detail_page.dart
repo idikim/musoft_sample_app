@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:madezone_study_student_app/model/notice.dart';
 
 class NoticeDetailPage extends StatelessWidget {
-  final Notice notice;
+  final NoticePost notice;
   final VoidCallback onBack;
 
   const NoticeDetailPage({

@@ -108,34 +108,45 @@ class _SubmissionPageState extends ConsumerState<SubmissionPage> {
           onTap: () {
             FocusScope.of(context).unfocus();
           },
-          child: SingleChildScrollView(
+          child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              spacing: 24,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (currentPageIndex < 2)
                   _StepIndicatorBar(currentPageIndex: currentPageIndex),
-                SizedBox(
-                  height:
-                      MediaQuery.of(context).size.height -
-                      (currentPageIndex < 2
-                          ? AppBar().preferredSize.height
-                          : 0) -
-                      MediaQuery.of(context).padding.top -
-                      MediaQuery.of(context).padding.bottom -
-                      (currentPageIndex < 2 ? 170 : 95),
-                  child: PageView(
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    onPageChanged: (index) {
-                      ref.read(currentPageIndexProvider.notifier).state = index;
-                    },
-                    children: [
-                      PenaltySubmissionStep1Page(penalty: widget.penalty),
-                      const PenaltySubmissionStep2Page(),
-                      const PenaltySubmissionStep3Page(),
-                    ],
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.height -
+                              (currentPageIndex < 2
+                                  ? AppBar().preferredSize.height
+                                  : 0) -
+                              MediaQuery.of(context).padding.top -
+                              MediaQuery.of(context).padding.bottom -
+                              (currentPageIndex < 2 ? 170 : 95),
+                          child: PageView(
+                            controller: _pageController,
+                            physics: const NeverScrollableScrollPhysics(),
+                            onPageChanged: (index) {
+                              ref
+                                  .read(currentPageIndexProvider.notifier)
+                                  .state = index;
+                            },
+                            children: [
+                              PenaltySubmissionStep1Page(
+                                penalty: widget.penalty,
+                              ),
+                              const PenaltySubmissionStep2Page(),
+                              const PenaltySubmissionStep3Page(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 _SubmissionFooter(

@@ -4,7 +4,7 @@ import 'package:madezone_study_student_app/provider/meal_order_provider.dart';
 import 'package:madezone_study_student_app/provider/common_providers.dart';
 import 'item_meal_status.dart';
 import 'package:intl/intl.dart';
-import 'package:madezone_study_student_app/model/meal_order.dart';
+import 'package:madezone_study_student_app/model/meal.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 

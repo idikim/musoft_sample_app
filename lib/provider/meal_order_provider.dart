@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:madezone_study_student_app/model/meal_order.dart';
+import 'package:madezone_study_student_app/model/meal.dart';
 import 'package:madezone_study_student_app/repository/meal_order_repository.dart';
 
 final mealOrderProvider = FutureProvider<List<MealOrder>>((ref) async {
@@ -7,9 +7,10 @@ final mealOrderProvider = FutureProvider<List<MealOrder>>((ref) async {
 });
 
 final mealOrderAddProvider = Provider((ref) => MealOrderAddNotifier(ref));
-
 final selectedDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
 final selectedMealTypeProvider = StateProvider<String>((ref) => '점심');
+final selectedMealIndexProvider = StateProvider<int?>((ref) => null);
+final isOrderingProvider = StateProvider<bool>((ref) => false);
 
 class MealOrderAddNotifier {
   final Ref ref;

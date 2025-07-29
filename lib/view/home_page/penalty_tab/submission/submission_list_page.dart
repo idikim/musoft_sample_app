@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
-import 'package:madezone_study_student_app/model/penalty_reason.dart';
 import 'package:madezone_study_student_app/provider/penalty_provider.dart'
     as pp;
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/submission/submission_page.dart';

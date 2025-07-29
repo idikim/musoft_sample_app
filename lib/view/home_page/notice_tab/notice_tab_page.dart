@@ -4,9 +4,9 @@ import 'package:madezone_study_student_app/model/notice.dart';
 import 'package:madezone_study_student_app/view/home_page/notice_tab/notice_sample_data.dart';
 
 class HomeTabNoticePage extends StatelessWidget {
-  final Function(Notice) onNoticeSelected;
+  final Function(NoticePost) onNoticeSelected;
 
-  HomeTabNoticePage({super.key, required this.onNoticeSelected});
+  const HomeTabNoticePage({super.key, required this.onNoticeSelected});
 
   @override
   Widget build(BuildContext context) {

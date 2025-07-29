@@ -1,6 +1,4 @@
 import 'package:madezone_study_student_app/model/penalty.dart';
-import 'package:madezone_study_student_app/model/penalty_category.dart';
-import 'package:madezone_study_student_app/model/penalty_reason.dart';
 
 List<Penalty> getPenaltiesForMonth(int month) {
   final allPenalties = [

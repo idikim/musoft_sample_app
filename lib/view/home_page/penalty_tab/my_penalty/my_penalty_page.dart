@@ -4,7 +4,7 @@ import 'package:madezone_study_student_app/provider/common_providers.dart';
 import 'package:madezone_study_student_app/model/penalty.dart';
 import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/item_my_penalty.dart';
 import 'package:intl/intl.dart';
-import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/my_penalty_calendar_page.dart';
+import 'package:madezone_study_student_app/view/home_page/penalty_tab/my_penalty/calendar/my_penalty_calendar_page.dart';
 import 'package:madezone_study_student_app/provider/penalty_provider.dart';
 
 class MyPenaltyPage extends ConsumerWidget {

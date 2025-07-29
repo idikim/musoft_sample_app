@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:madezone_study_student_app/model/meal_order.dart';
+import 'package:madezone_study_student_app/model/meal.dart';
 
 class MealOrderRepository {
   static const _key = 'meal_orders';
