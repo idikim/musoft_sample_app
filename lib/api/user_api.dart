@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -15,10 +16,15 @@ class UserApi {
     }
 
     try {
+      final body = {
+        'token': token,
+        if (Platform.isIOS && apnsToken != null) 'apnsToken': apnsToken,
+      };
+
       await http.post(
         Uri.parse('http://10.0.2.2:8080/api/user/fcm-token'),
         headers: {'Content-Type': 'application/json'},
-        body: '{"token": "$token"}',
+        body: jsonEncode(body),
       );
     } catch (e) {
       log('sendFcmToken error: $e');

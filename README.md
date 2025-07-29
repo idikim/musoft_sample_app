@@ -22,6 +22,7 @@
 - **get**: 페이지 라우팅
 - **permission_handler**: 알림 권한 요청
 - **http**: 서버와 통신(FCM 토큰 전송)
+- **device_info_plus**: 디바이스 정보 조회 (제조사, 기기 모델, OS 버전 등)
 
 `pubspec.yaml` :
 ```yaml
@@ -32,6 +33,7 @@ dependencies:
   get: ^4.7.2
   permission_handler: ^12.0.1
   http: ^1.4.0
+  device_info_plus: ^11.5.0
 ```
 
 ---
@@ -41,17 +43,29 @@ dependencies:
 ### 3.1. FCM 토큰 발급 및 서버 전송
 
 #### 1) 토큰 발급 및 서버 전송
-- 앱 실행 시 FCM 토큰을 발급받아 서버로 전송합니다.
-- 토큰이 갱신될 때마다 서버로 갱신된 토큰을 전송합니다.
-- iOS의 경우 apnsToken도 함께 전송합니다.
+- 앱 실행 시 FCM 토큰을 발급받아 서버로 전송
+- 웹 환경 또는 실제 기기에서는 전송하지 않음 (에뮬레이터/시뮬레이터에서만 전송)
+- device_info_plus로 물리 디바이스 여부 확인
+- iOS의 경우, FCM 토큰과 함께 APNs 토큰(apnsToken)도 서버에 함께 전송
 
 ```dart
 // lib/api/user_api.dart
 import 'dart:developer';
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class UserApi {
   static Future<void> sendFcmToken(String token, {String? apnsToken}) async {
+    if (kIsWeb) {
+      return;
+    }
+
+    if (await _isPhysicalDevice()) {
+      return;
+    }
+
     try {
       await http.post(
         Uri.parse('http://10.0.2.2:8080/api/user/fcm-token'),
@@ -62,7 +76,20 @@ class UserApi {
       log('sendFcmToken error: $e');
     }
   }
+
+  static Future<bool> _isPhysicalDevice() async {
+    final deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.isPhysicalDevice;
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      return iosInfo.isPhysicalDevice;
+    }
+    return true;
+  }
 }
+
 ```
 
 #### 2) FCM 초기화 및 핸들러 등록

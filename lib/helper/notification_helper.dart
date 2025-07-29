@@ -117,7 +117,8 @@ class NotificationHelper {
   }) async {
     await initialize();
     await requestPermission();
-    if (onNotificationTapCallback != null)
+    if (onNotificationTapCallback != null) {
       setOnNotificationTap(onNotificationTapCallback);
+    }
   }
 }
