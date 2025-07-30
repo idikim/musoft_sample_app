@@ -241,10 +241,6 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
       title: _titleController.text,
       details:
           _contentController.text.isNotEmpty ? [_contentController.text] : null,
-      color:
-          _selectedCategory == ScheduleCategory.study
-              ? Colors.green.shade100
-              : Colors.red.shade100,
       category: _selectedCategory!,
     );
 

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:madezone_study_student_app/provider/common_providers.dart';
 import 'package:madezone_study_student_app/provider/daily_schedule_provider.dart';
-
 import 'package:madezone_study_student_app/view/learning_page/my_schedule/widgets/add_schedule_dialog.dart';
 import 'widgets/date_picker_bottom_sheet.dart';
 import 'widgets/schedule_table.dart';
@@ -20,22 +19,73 @@ class MySchedulePage extends ConsumerWidget {
     final isScheduleChecked = ref.watch(_scheduleCheckProvider);
     final selectedViewType = ref.watch(_selectedViewTypeProvider);
     final selectedYear = ref.watch(selectedYearProvider);
+    final allSchedules = ref.watch(allDailySchedulesProvider);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        elevation: 0,
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        shape: CircleBorder(),
-        onPressed: () {
-          _showAddScheduleDialog(
-            context,
-            ref.read(selectedYearProvider),
-            ref.read(selectedMonthProvider),
-            ref.read(selectedDayProvider)!,
-          );
-        },
-        child: const Icon(Icons.add, size: 40),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          if (allSchedules.isEmpty)
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  top: -36,
+                  left: -24,
+                  right: -24,
+                  child: ClipPath(
+                    clipper: BubbleClipper(),
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(12, 4, 12, 12),
+                      decoration: BoxDecoration(
+                        color: Colors.black38,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '샘플데이터 추가',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                        softWrap: false,
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ),
+                ),
+                FloatingActionButton(
+                  elevation: 0,
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                  shape: CircleBorder(),
+                  onPressed: () {
+                    ref
+                        .read(allDailySchedulesProvider.notifier)
+                        .addSampleSchedules();
+                  },
+                  child: const Icon(Icons.add_chart, size: 24),
+                ),
+              ],
+            ),
+          SizedBox(width: 16),
+          FloatingActionButton(
+            elevation: 0,
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            shape: CircleBorder(),
+            onPressed: () {
+              _showAddScheduleDialog(
+                context,
+                ref.read(selectedYearProvider),
+                ref.read(selectedMonthProvider),
+                ref.read(selectedDayProvider)!,
+              );
+            },
+            child: const Icon(Icons.add, size: 40),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -519,4 +569,28 @@ Widget _buildWeeklyCalendar(
       ],
     ),
   );
+}
+
+class BubbleClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.addRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, size.height - 8),
+        Radius.circular(8),
+      ),
+    );
+
+    path.moveTo(size.width / 2 - 6, size.height - 8);
+    path.lineTo(size.width / 2, size.height);
+    path.lineTo(size.width / 2 + 6, size.height - 8);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

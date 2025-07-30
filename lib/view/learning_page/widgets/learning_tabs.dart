@@ -67,8 +67,11 @@ class LearningTabs extends StatelessWidget {
             onTap: () {
               showModalBottomSheet(
                 context: context,
+                isScrollControlled: true,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20.0),
+                  ),
                 ),
                 builder: (BuildContext context) {
                   return const StudyTimeStatisticsBottomSheet();

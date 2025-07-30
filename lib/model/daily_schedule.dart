@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 enum ScheduleCategory { study, penalty }
 
 class DailySchedule {
@@ -10,7 +8,6 @@ class DailySchedule {
   final int endMinute;
   final String title;
   final List<String>? details;
-  final Color color;
   final ScheduleCategory category;
 
   DailySchedule({
@@ -21,7 +18,6 @@ class DailySchedule {
     required this.endMinute,
     required this.title,
     this.details,
-    required this.color,
     this.category = ScheduleCategory.study,
   });
 
@@ -34,7 +30,6 @@ class DailySchedule {
       endMinute: json['endMinute'] as int,
       title: json['title'] as String,
       details: (json['details'] as List?)?.map((e) => e as String).toList(),
-      color: Color(json['color'] as int),
       category: ScheduleCategory.values.firstWhere(
         (e) => e.name == (json['category'] as String?),
         orElse: () => ScheduleCategory.study,
@@ -50,7 +45,6 @@ class DailySchedule {
     'endMinute': endMinute,
     'title': title,
     'details': details,
-    'color': color.value,
     'category': category.name,
   };
 }

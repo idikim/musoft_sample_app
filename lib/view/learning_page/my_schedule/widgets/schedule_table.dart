@@ -117,7 +117,10 @@ class _HourRow extends StatelessWidget {
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 2),
                       decoration: BoxDecoration(
-                        color: schedule.color.withOpacity(0.7),
+                        color:
+                            schedule.category == ScheduleCategory.study
+                                ? Colors.green.shade100
+                                : Colors.red.shade100,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       padding: const EdgeInsets.symmetric(
@@ -134,11 +137,11 @@ class _HourRow extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
-                                  color: schedule.category == ScheduleCategory.study
-                                      ? Colors.green
-                                      : schedule.category == ScheduleCategory.penalty
-                                          ? Colors.red
-                                          : Colors.black,
+                                  color:
+                                      schedule.category ==
+                                              ScheduleCategory.study
+                                          ? Colors.green.shade700
+                                          : Colors.red.shade700,
                                 ),
                               ),
                               const SizedBox(width: 6),
@@ -146,11 +149,11 @@ class _HourRow extends StatelessWidget {
                                 '(${_formatDuration(schedule.startHour, schedule.startMinute, schedule.endHour, schedule.endMinute)})',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: schedule.category == ScheduleCategory.study
-                                      ? Colors.green
-                                      : schedule.category == ScheduleCategory.penalty
-                                          ? Colors.red
-                                          : Colors.black,
+                                  color:
+                                      schedule.category ==
+                                              ScheduleCategory.study
+                                          ? Colors.green.shade700
+                                          : Colors.red.shade700,
                                 ),
                               ),
                             ],
