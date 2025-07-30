@@ -51,7 +51,8 @@ class _RankingPageState extends State<RankingPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                height: 36,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(8),
@@ -74,7 +75,8 @@ class _RankingPageState extends State<RankingPage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                height: 36,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(8),
@@ -100,116 +102,116 @@ class _RankingPageState extends State<RankingPage> {
           ),
           SizedBox(height: 16),
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('오늘의 열공왕'),
-                  Text('하루 공부시간 기준 TOP 랭킹'),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    height: 200,
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: BarChart(
-                            BarChartData(
-                              alignment: BarChartAlignment.spaceAround,
-                              maxY: 15,
-                              minY: 0,
-                              barTouchData: BarTouchData(
-                                touchTooltipData: BarTouchTooltipData(
-                                  getTooltipColor:
-                                      (group) => Colors.transparent,
-                                  tooltipPadding: const EdgeInsets.all(0),
-                                  tooltipMargin: -30,
-                                  getTooltipItem: (
-                                    group,
-                                    groupIndex,
-                                    rod,
-                                    rodIndex,
-                                  ) {
-                                    final index = group.x.toInt();
-                                    final label = barData[index]['label'];
-                                    return BarTooltipItem(
-                                      '',
-                                      const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
+            child: Column(
+              children: [
+                Text(
+                  '오늘의 열공왕',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '하루 공부시간 기준 TOP 랭킹',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  height: 200,
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: BarChart(
+                          BarChartData(
+                            alignment: BarChartAlignment.spaceAround,
+                            maxY: 15,
+                            minY: 0,
+                            barTouchData: BarTouchData(
+                              touchTooltipData: BarTouchTooltipData(
+                                getTooltipColor: (group) => Colors.transparent,
+                                tooltipPadding: const EdgeInsets.all(0),
+                                tooltipMargin: -30,
+                                getTooltipItem: (
+                                  group,
+                                  groupIndex,
+                                  rod,
+                                  rodIndex,
+                                ) {
+                                  final index = group.x.toInt();
+                                  final label = barData[index]['label'];
+                                  return BarTooltipItem(
+                                    '',
+                                    const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: label,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
                                       ),
-                                      children: [
-                                        TextSpan(
-                                          text: label,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
+                                      const TextSpan(text: '\n\n'),
+                                      TextSpan(
+                                        text: formatHour(rod.toY),
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
                                         ),
-                                        const TextSpan(text: '\n\n'),
-                                        TextSpan(
-                                          text: formatHour(rod.toY),
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
-                              titlesData: FlTitlesData(
-                                show: true,
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                              ),
-                              borderData: FlBorderData(show: false),
-                              gridData: FlGridData(show: false),
-                              barGroups:
-                                  barData.asMap().entries.map((entry) {
-                                    final colors = [
-                                      Colors.blue[200],
-                                      Colors.red[200],
-                                      Colors.amber[200],
-                                    ];
-                                    return BarChartGroupData(
-                                      x: entry.key,
-                                      barRods: [
-                                        BarChartRodData(
-                                          toY: entry.value['value'],
-                                          color:
-                                              colors[entry.key % colors.length],
-                                          width: 80,
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                        ),
-                                      ],
-                                      showingTooltipIndicators: [0],
-                                    );
-                                  }).toList(),
                             ),
+                            titlesData: FlTitlesData(
+                              show: true,
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                            ),
+                            borderData: FlBorderData(show: false),
+                            gridData: FlGridData(show: false),
+                            barGroups:
+                                barData.asMap().entries.map((entry) {
+                                  final colors = [
+                                    Colors.blue[200],
+                                    Colors.red[200],
+                                    Colors.amber[200],
+                                  ];
+                                  return BarChartGroupData(
+                                    x: entry.key,
+                                    barRods: [
+                                      BarChartRodData(
+                                        toY: entry.value['value'],
+                                        color:
+                                            colors[entry.key % colors.length],
+                                        width: 80,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ],
+                                    showingTooltipIndicators: [0],
+                                  );
+                                }).toList(),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
