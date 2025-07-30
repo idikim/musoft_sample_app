@@ -92,7 +92,7 @@ class _PureStudyTimePageState extends State<PureStudyTimePage> {
                           minY: 0,
                           barTouchData: BarTouchData(
                             touchTooltipData: BarTouchTooltipData(
-                              getTooltipColor: (group) => Colors.white,
+                              getTooltipColor: (group) => Colors.transparent,
                               tooltipPadding: const EdgeInsets.all(0),
                               tooltipMargin: 8,
                               getTooltipItem: (
@@ -196,7 +196,7 @@ class _PureStudyTimePageState extends State<PureStudyTimePage> {
                         Transform.scale(
                           scale: 0.8,
                           child: CupertinoSwitch(
-                            activeTrackColor: Colors.grey,
+                            activeTrackColor: Colors.lightBlue,
                             value: _isSimilarScheduleEnabled,
                             onChanged: (value) {
                               setState(() {
