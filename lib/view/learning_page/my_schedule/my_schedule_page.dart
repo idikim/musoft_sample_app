@@ -120,21 +120,21 @@ class MySchedulePage extends ConsumerWidget {
                       children: [
                         _buildViewTypeButton(
                           ref,
-                          'assets/svg/Group 256.svg',
+                          'assets/images/svg/Group 256.svg',
                           '일',
                           ViewType.daily,
                           selectedViewType,
                         ),
                         _buildViewTypeButton(
                           ref,
-                          'assets/svg/Group 255.svg',
+                          'assets/images/svg/Group 255.svg',
                           '주',
                           ViewType.weekly,
                           selectedViewType,
                         ),
                         _buildViewTypeButton(
                           ref,
-                          'assets/svg/Group 257.svg',
+                          'assets/images/svg/Group 257.svg',
                           '월',
                           ViewType.monthly,
                           selectedViewType,
