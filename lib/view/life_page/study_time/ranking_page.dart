@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class RankingPage extends StatefulWidget {
   const RankingPage({super.key});
@@ -18,22 +17,18 @@ class _RankingPageState extends State<RankingPage> {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> barData = [
-      {
-        'label': '김이등님',
-        'value': 8.5,
-        'trophy': 'assets/images/svg/trophy2.svg',
-      },
-      {
-        'label': '메이드님',
-        'value': 12.3,
-        'trophy': 'assets/images/svg/trophy1.svg',
-      },
-      {
-        'label': '박삼등님',
-        'value': 7.2,
-        'trophy': 'assets/images/svg/trophy2.svg',
-      },
+      {'label': '김이등님', 'value': 8.5, 'trophy': 'assets/images/trophy2.png'},
+      {'label': '메이드님', 'value': 12.3, 'trophy': 'assets/images/trophy1.png'},
+      {'label': '박삼등님', 'value': 7.2, 'trophy': 'assets/images/trophy2.png'},
     ];
+
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double barAreaWidth = screenWidth - 40;
+    final int barCount = barData.length;
+    final double barWidth = (barAreaWidth / (barCount * 1.3)).clamp(
+      40.0,
+      100.0,
+    );
 
     String formatHour(double hour) {
       final int hours = hour.floor();
@@ -114,98 +109,65 @@ class _RankingPageState extends State<RankingPage> {
                 ),
                 SizedBox(height: 20),
                 SizedBox(
-                  height: 200,
+                  height: 220,
                   child: Stack(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: BarChart(
-                          BarChartData(
-                            alignment: BarChartAlignment.spaceAround,
-                            maxY: 15,
-                            minY: 0,
-                            barTouchData: BarTouchData(
-                              touchTooltipData: BarTouchTooltipData(
-                                getTooltipColor: (group) => Colors.transparent,
-                                tooltipPadding: const EdgeInsets.all(0),
-                                tooltipMargin: -30,
-                                getTooltipItem: (
-                                  group,
-                                  groupIndex,
-                                  rod,
-                                  rodIndex,
-                                ) {
-                                  final index = group.x.toInt();
-                                  final label = barData[index]['label'];
-                                  return BarTooltipItem(
-                                    '',
-                                    const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: label,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black87,
-                                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: List.generate(barData.length, (index) {
+                            final item = barData[index];
+                            final double value = item['value'];
+                            final double barHeight = (value / 15) * 150;
+                            final colors = [
+                              Colors.blue[200],
+                              Colors.red[200],
+                              Colors.amber[200],
+                            ];
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  height: 52,
+                                  child: Image.asset(
+                                    item['trophy'],
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  item['label'],
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                SizedBox(height: 8),
+                                Stack(
+                                  alignment: Alignment.bottomCenter,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.only(top: 4),
+                                      width: barWidth,
+                                      height: barHeight,
+                                      decoration: BoxDecoration(
+                                        color: colors[index % colors.length],
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
-                                      const TextSpan(text: '\n\n'),
-                                      TextSpan(
-                                        text: formatHour(rod.toY),
-                                        style: const TextStyle(
+                                      child: Text(
+                                        formatHour(value),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black87,
                                         ),
                                       ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                            titlesData: FlTitlesData(
-                              show: true,
-                              topTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              leftTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              rightTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              bottomTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                            ),
-                            borderData: FlBorderData(show: false),
-                            gridData: FlGridData(show: false),
-                            barGroups:
-                                barData.asMap().entries.map((entry) {
-                                  final colors = [
-                                    Colors.blue[200],
-                                    Colors.red[200],
-                                    Colors.amber[200],
-                                  ];
-                                  return BarChartGroupData(
-                                    x: entry.key,
-                                    barRods: [
-                                      BarChartRodData(
-                                        toY: entry.value['value'],
-                                        color:
-                                            colors[entry.key % colors.length],
-                                        width: 80,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ],
-                                    showingTooltipIndicators: [0],
-                                  );
-                                }).toList(),
-                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          }),
                         ),
                       ),
                     ],
