@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
 class TabStrings {
-  static const List<String> topTabs = ['홈', '공지사항', '식사', '상점', '벌점'];
+  static const List<String> topTabs = ['홈', '공지사항', '도시락', '상점', '벌점'];
 }
 
 class HomeTabs extends StatelessWidget {
   final List<String> topTabs;
   final int topTabIndex;
   final ValueChanged<int> onTopTabChanged;
-  final VoidCallback onNotificationTap;
+  final VoidCallback? onNotificationTap;
 
   const HomeTabs({
     super.key,
     required this.topTabs,
     required this.topTabIndex,
     required this.onTopTabChanged,
-    required this.onNotificationTap,
+    this.onNotificationTap,
   });
 
   @override
